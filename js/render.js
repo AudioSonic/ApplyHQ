@@ -1,1 +1,125 @@
 /* Darstellung der Inhalte */
+const applicationList = document.getElementById("application-list");
+const emptyState = document.querySelector(".empty-state");
+const applicationCount = document.getElementById("application-count");
+
+const statusLabels = {
+    open: "Offen",
+    applied: "Beworben",
+    interview: "Interview",
+    rejected: "Absage",
+    accepted: "Zusage"
+};
+
+function renderApplications(){
+    checkForEmptyState();
+    applicationList.replaceChildren();
+    applicationCount.textContent = applications.length;
+
+    applications.forEach(application => {
+        createApplicationCard(application);
+    })
+}
+
+function createApplicationCard(application){
+    const applicationCard = document.createElement("article");
+    const logoFrame = document.createElement("div");
+    const companyName = document.createElement("h3");
+    const position = document.createElement("p");
+    const status = document.createElement("span");
+    const dateRow = document.createElement("div");
+    const applicationDate = document.createElement("p");
+    const notes = document.createElement("p");
+    const logo = document.createElement("img");
+    const logoFallback = document.createElement("span");
+    const calendarIcon = document.createElement("img");
+    const information = document.createElement("div");
+    const deleteButton = document.createElement("button");
+    const statusAndDelete = document.createElement("div");
+    const deleteButtonIcon = document.createElement("img");
+    
+    companyName.textContent = application.company;
+    position.textContent = application.position;
+    status.textContent = statusLabels[application.status] || application.status;
+    applicationDate.textContent = formatApplicationDate(application.date);
+    notes.textContent = application.notes || "Keine Notizen hinterlegt.";
+    logoFallback.textContent = getCompanyInitials(application.company);
+    calendarIcon.src = "assets/icons/icon_calendar.svg";
+    calendarIcon.alt = "";
+
+    applicationCard.classList.add("application-card");
+    logoFrame.classList.add("application-logo");
+    information.classList.add("application-info");
+    position.classList.add("application-position");
+    dateRow.classList.add("application-date");
+    notes.classList.add("application-notes");
+    status.classList.add("status-badge", `status-${application.status}`);
+    statusAndDelete.classList.add("status-and-delete");
+    deleteButton.type = "button";
+    deleteButton.setAttribute("aria-label", `Bewerbung von ${application.company} löschen`);
+    deleteButtonIcon.src = "assets/icons/icon_delete.svg";
+    deleteButtonIcon.alt = "";
+    deleteButton.classList.add("icon-button");
+
+    if(application.logo){
+        logo.src = application.logo;
+        logo.alt = `${application.company} Logo`;
+        logoFrame.appendChild(logo);
+    }
+    else{
+        logoFrame.appendChild(logoFallback);
+    }
+
+    deleteButton.appendChild(deleteButtonIcon);
+    dateRow.appendChild(calendarIcon);
+    dateRow.appendChild(applicationDate);
+
+    information.appendChild(companyName);
+    information.appendChild(position);
+    information.appendChild(dateRow);
+    information.appendChild(notes);
+
+    statusAndDelete.appendChild(status);
+    statusAndDelete.appendChild(deleteButton);
+
+    applicationCard.appendChild(logoFrame);
+    applicationCard.appendChild(information);
+    applicationCard.appendChild(statusAndDelete);
+
+    applicationList.appendChild(applicationCard);
+}
+
+function formatApplicationDate(date){
+    if(!date){
+        return "Kein Datum";
+    }
+
+    return new Date(date).toLocaleDateString("de-DE", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+    });
+}
+
+function getCompanyInitials(company){
+    return company
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(word => word[0])
+        .join("")
+        .toUpperCase();
+}
+
+function updateDashboard(){
+
+}
+
+function checkForEmptyState(){
+    if(applications.length === 0){
+        emptyState.style.display = "flex";
+    }
+    else{
+        emptyState.style.display = "none";
+    }
+}

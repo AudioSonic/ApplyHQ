@@ -1,39 +1,96 @@
-/* Bereiche wie Header, Main, Grid und Flexbox-Layouts. */
+/* Page and section layout */
 
-header{
-    background-color: var(--color-card);
-    display: flex;
-    justify-content: space-between;
+.app-header,
+main {
+    width: min(100% - 40px, var(--page-max-width));
+    margin-inline: auto;
 }
 
-#overview{
+.app-header {
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--color-border);
+    border-radius: 0 0 var(--border-radius-panel) var(--border-radius-panel);
+    box-shadow: 0 10px 30px rgba(31, 41, 55, 0.05);
     display: flex;
+    gap: 20px;
     justify-content: space-between;
+    padding: 22px 26px;
 }
 
-#applications{
+main {
+    padding-block: 34px 48px;
+}
+
+.section-heading {
+    margin-bottom: 18px;
+}
+
+#overview {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 24px;
-    margin-top: 40px;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 
-#new-application{
+#applications {
+    align-items: start;
+    display: grid;
+    gap: 24px;
+    grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+    margin-top: 30px;
+}
+
+#new-application {
     display: flex;
     flex-direction: column;
     gap: 0;
-    max-width: 590px;
 }
 
-.horizontal-orientation{
+.horizontal-orientation {
     display: flex;
     flex-direction: row;
     gap: 24px;
 }
 
-.vertical-orientation{
+.vertical-orientation {
     display: flex;
-    flex-direction: column;
     flex: 1;
+    flex-direction: column;
     min-width: 0;
+}
+
+@media (max-width: 900px) {
+    .app-header,
+    main {
+        width: min(100% - 32px, var(--page-max-width));
+    }
+
+    #applications {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .app-header,
+    main {
+        width: min(100% - 24px, var(--page-max-width));
+    }
+
+    .app-header {
+        align-items: flex-start;
+        padding: 18px;
+    }
+
+    main {
+        padding-block: 26px 34px;
+    }
+
+    #overview {
+        grid-template-columns: 1fr;
+    }
+
+    .horizontal-orientation {
+        flex-direction: column;
+        gap: 0;
+    }
 }

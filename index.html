@@ -10,18 +10,23 @@
 </head>
 
 <body>
-    <header>
+    <header class="app-header">
         <div>
             <h1>ApplyHQ</h1>
             <p>Verwalte deine Bewerbungen an einem Ort.</p>
         </div>
 
-        <button><img src="assets/icons/icon_moon.svg"></button>
+        <button class="theme-toggle" type="button" aria-label="Darstellung umschalten">
+            <img src="assets/icons/icon_moon.svg" alt="">
+        </button>
     </header>
 
     <main>
-        <h2>Übersicht</h2>
-        <section id="overview">
+        <section class="section-heading" aria-labelledby="overview-title">
+            <h2 id="overview-title">Übersicht</h2>
+        </section>
+
+        <section id="overview" aria-label="Bewerbungsübersicht">
             <div class="overview-card">
                 <div class="overview-card-icon">
                     <svg
@@ -140,14 +145,27 @@
             </form>
 
             <section id="application-overview" class="panel">
-                <h2>Deine Bewerbungen</h2>  
+                <div class="panel-header">
+                    <div>
+                        <h2>Deine Bewerbungen (<span id="application-count">0</span>)</h2>
+                    </div>
+                    <label class="sort-control" for="application-sort">
+                        <span>Sortierung:</span>
+                        <select id="application-sort" name="application-sort">
+                            <option value="newest">Neueste zuerst</option>
+                            <option value="oldest">Älteste zuerst</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="empty-state">
+                    <p>Noch keine Bewerbungen vorhanden.</p> 
+                </div>
+                <div id="application-list"></div>
             </section>
         </section>
         
     </main>
-
-    <footer>
-    </footer>
 
     <script src="js/applications.js"></script>
     <script src="js/render.js"></script>

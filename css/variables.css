@@ -1,35 +1,33 @@
-/*Farben, Abstände, Border-Radius, Schriftgrößen*/
+/* Design tokens */
 
 :root {
-    /* Hintergrund */
-    --color-background: #FAFAFE;
-    --color-card: #FFFFFF;
+    --color-background: #f8fafc;
+    --color-surface: #ffffff;
+    --color-surface-soft: #f9fbff;
+    --color-text: #111827;
+    --color-text-secondary: #667085;
+    --color-text-light: #ffffff;
 
-    /* Text */
-    --color-text: #1F2937;
-    --color-text-secondary: #6B7280;
-    --color-text-light: rgb(243, 243, 243);
+    --color-primary: #5229d3;
+    --color-primary-hover: #4321af;
+    --color-primary-soft: #ede9fe;
 
-    /* Buttons */
-    --color-button: #5229D3;
-    --color-hover: #4321AF;
+    --color-border: #e4e7ec;
+    --color-border-strong: #d8dfec;
 
-    /* Rahmen */
-    --color-border: #E5E7EB;
+    --color-light-blue: #e1e9fd;
+    --color-dark-blue: #3969fb;
+    --color-light-orange: #fdeadb;
+    --color-dark-orange: #ed5500;
+    --color-light-red: #fddfe2;
+    --color-dark-red: #e8272e;
+    --color-light-green: #daf8eb;
+    --color-dark-green: #00b650;
 
-    /* Statusfarben */
-    --color-light-blue: #E1E9FD;
-    --color-dark-blue: #3969FB;
+    --shadow-panel: 0 18px 45px rgba(31, 41, 55, 0.08);
+    --shadow-card: 0 12px 30px rgba(31, 41, 55, 0.06);
 
-    --color-light-orange: #FDEADB;
-    --color-dark-orange: #ED5500;
-
-    --color-light-red: #FDDFE2;
-    --color-dark-red: #E8272E;
-
-    --color-light-green: #DAF8EB;
-    --color-dark-green: #00B650;
-
-    /* Sonstiges */
     --border-radius: 10px;
+    --border-radius-panel: 14px;
+    --page-max-width: 1180px;
 }
