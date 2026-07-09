@@ -1,0 +1,38 @@
+/* Wiederverwendbare Elemente wie Cards, Buttons oder Formulare. */
+
+button:hover {
+    background-color: var(--color-hover);
+}
+
+.overview-card{
+    background-color: var(--color-card);
+    height: 90px;
+    width: 250px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    padding-left: 15px;
+    gap: 15px;
+}
+
+.overview-card-icon {
+    background-color: var(--color-light-blue);
+    width: 45px;
+    height: 45px;
+    border-radius: var(--border-radius);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overview-card-icon svg {
+    width: 24px;
+    height: 24px;
+    color: var(--color-dark-blue);
+}
+
+.panel {
+    background-color: var(--color-card);
+    border-radius: var(--border-radius);
+    padding: 20px;
+}

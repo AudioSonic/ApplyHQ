@@ -1,0 +1,10 @@
+/* Grundlegendes Styling für body, h1, p, button usw. */
+
+body{
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
+p {
+    color: var(--color-text-secondary);
+}

@@ -1,0 +1,34 @@
+/*Farben, Abstände, Border-Radius, Schriftgrößen*/
+
+:root {
+    /* Hintergrund */
+    --color-background: #FAFAFE;
+    --color-card: #FFFFFF;
+
+    /* Text */
+    --color-text: #1F2937;
+    --color-text-secondary: #6B7280;
+
+    /* Buttons */
+    --color-button: #5229D3;
+    --color-hover: #4321AF;
+
+    /* Rahmen */
+    --color-border: #E5E7EB;
+
+    /* Statusfarben */
+    --color-light-blue: #E1E9FD;
+    --color-dark-blue: #3969FB;
+
+    --color-light-orange: #FDEADB;
+    --color-dark-orange: #ED5500;
+
+    --color-light-red: #FDDFE2;
+    --color-dark-red: #E8272E;
+
+    --color-light-green: #DAF8EB;
+    --color-dark-green: #00B650;
+
+    /* Sonstiges */
+    --border-radius: 10px;
+}

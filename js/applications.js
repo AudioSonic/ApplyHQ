@@ -1,0 +1,1 @@
+/* Verarbeitung der Daten */

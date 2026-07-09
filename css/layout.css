@@ -1,0 +1,18 @@
+/* Bereiche wie Header, Main, Grid und Flexbox-Layouts. */
+
+header{
+    background-color: var(--color-card);
+    display: flex;
+    justify-content: space-between;
+}
+
+#overview{
+    display: flex;
+    justify-content: space-between;
+}
+
+#applications{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    margin-top: 40px;
+}
