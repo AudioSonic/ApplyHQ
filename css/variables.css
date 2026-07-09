@@ -8,6 +8,7 @@
     /* Text */
     --color-text: #1F2937;
     --color-text-secondary: #6B7280;
+    --color-text-light: rgb(243, 243, 243);
 
     /* Buttons */
     --color-button: #5229D3;

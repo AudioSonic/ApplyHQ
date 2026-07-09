@@ -14,5 +14,26 @@ header{
 #applications{
     display: grid;
     grid-template-columns: 1fr 2fr;
+    gap: 24px;
     margin-top: 40px;
+}
+
+#new-application{
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 590px;
+}
+
+.horizontal-orientation{
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+}
+
+.vertical-orientation{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
 }
