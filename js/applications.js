@@ -1,5 +1,5 @@
 /* Verarbeitung der Daten */
-const applications = [];
+let applications = [];
 let applicationId = 0;
 
 function addApplication(){
@@ -20,16 +20,19 @@ function addApplication(){
     console.log(applications);
 }
 
-function deleteApplication(){
-
+function deleteApplication(id){
+    applications = applications.filter(application => application.id !== id);
+    saveApplications();
+    renderApplications();
+    updateDashboard();
 }
 
 function changeStatus(){
 
 }
 
-function getApplicationById(){
-
+function getApplicationById(id){
+    applications = applications.filter(application => application.id === id);   
 }
 
 

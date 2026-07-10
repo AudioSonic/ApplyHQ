@@ -2,6 +2,11 @@
 const applicationList = document.getElementById("application-list");
 const emptyState = document.querySelector(".empty-state");
 const applicationCount = document.getElementById("application-count");
+const overviewOpen = document.getElementById("overview-open");
+const overviewApplied= document.getElementById("overview-applied");
+const overviewInterview = document.getElementById("overview-interviews");
+const overviewRejections = document.getElementById("overview-rejections");
+const overviewAccepted = document.getElementById("overview-accepted");
 
 const statusLabels = {
     open: "Offen",
@@ -16,9 +21,10 @@ function renderApplications(){
     applicationList.replaceChildren();
     applicationCount.textContent = applications.length;
 
-    applications.forEach(application => {
+    applications.forEach((application) => {
         createApplicationCard(application);
     })
+    updateDashboard();
 }
 
 function createApplicationCard(application){
@@ -70,6 +76,8 @@ function createApplicationCard(application){
         logoFrame.appendChild(logoFallback);
     }
 
+    deleteButton.addEventListener("click", () => {deleteApplication(application.id)});
+
     deleteButton.appendChild(deleteButtonIcon);
     dateRow.appendChild(calendarIcon);
     dateRow.appendChild(applicationDate);
@@ -111,10 +119,6 @@ function getCompanyInitials(company){
         .toUpperCase();
 }
 
-function updateDashboard(){
-
-}
-
 function checkForEmptyState(){
     if(applications.length === 0){
         emptyState.style.display = "flex";
@@ -122,4 +126,16 @@ function checkForEmptyState(){
     else{
         emptyState.style.display = "none";
     }
+}
+
+function updateDashboard(){
+    overviewOpen.textContent = countApplicationsByStatus("open");
+    overviewApplied.textContent = countApplicationsByStatus("applied");
+    overviewInterview.textContent = countApplicationsByStatus("interview");
+    overviewRejections.textContent = countApplicationsByStatus("rejected");
+    overviewAccepted.textContent = countApplicationsByStatus("accepted");
+}
+
+function countApplicationsByStatus(status){
+    return applications.filter(application => application.status === status).length;
 }
