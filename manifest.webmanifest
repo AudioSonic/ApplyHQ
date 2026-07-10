@@ -1,0 +1,21 @@
+{
+    "name": "ApplyHQ",
+    "short_name": "ApplyHQ",
+    "description": "Verwalte deine Bewerbungen an einem Ort.",
+    "start_url": "./",
+    "display": "standalone",
+    "background_color": "#FAFAFE",
+    "theme_color": "#5229D3",
+    "icons": [
+        {
+            "src": "assets/icons/ApplyHQ_Icon_small.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "assets/icons/ApplyHQ_Icon_large.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

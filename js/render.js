@@ -51,7 +51,7 @@ function createApplicationCard(application){
     location.textContent = formatApplicationLocation(application);
     status.textContent = statusLabels[application.status] || application.status;
     applicationDate.textContent = formatApplicationDate(application.date);
-    notes.textContent = application.notes || "Keine Notizen hinterlegt.";
+    notes.textContent = application.notes;
     logoFallback.textContent = getCompanyInitials(application.company);
     calendarIcon.src = "assets/icons/icon_calendar.svg";
     calendarIcon.alt = "";
