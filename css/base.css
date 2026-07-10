@@ -10,9 +10,17 @@ body {
     line-height: 1.5;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 h1,
 h2,
-p {
+p,
+button,
+input,
+select,
+textarea {
     overflow-wrap: anywhere;
 }
 
@@ -24,4 +32,9 @@ h2 {
 
 p {
     color: var(--color-text-secondary);
+}
+
+::selection {
+    background-color: var(--color-primary-soft);
+    color: var(--color-text);
 }

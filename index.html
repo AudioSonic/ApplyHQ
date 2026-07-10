@@ -112,15 +112,27 @@
             <form id="new-application" class="panel">
                 <h2>Neue Bewerbung anlegen</h2>
                 <label for="application-company">Unternehmen <span aria-hidden="true">*</span></label>
-                <input id="application-company" type="text" placeholder="z. B. Tech Solutions GmbH" required>
+                <input id="application-company" type="text" placeholder="z. B. Tech Solutions GmbH" minlength="2" maxlength="80" required>
 
                 <label for="application-position">Stellenbezeichnung <span aria-hidden="true">*</span></label>
-                <input id="application-position" type="text" placeholder="z. B. Frontend Entwickler (m/w/d)" required>
+                <input id="application-position" type="text" placeholder="z. B. Frontend Entwickler (m/w/d)" minlength="2" maxlength="100" required>
+
+                <div class="horizontal-orientation">
+                    <div class="vertical-orientation">
+                        <label for="application-city">Stadt</label>
+                        <input id="application-city" type="text" placeholder="z. B. Berlin" maxlength="80">
+                    </div>
+
+                    <div class="vertical-orientation">
+                        <label for="application-state">Bundesland</label>
+                        <input id="application-state" type="text" placeholder="z. B. Berlin" maxlength="80">
+                    </div>
+                </div>
                 
                 <div class="horizontal-orientation">
                     <div class="vertical-orientation">
                         <label for="application-date">Bewerbungsdatum</label>
-                        <input id="application-date" type="date" value="2026-07-09">
+                        <input id="application-date" type="date" required>
                     </div>
                     
                     <div class="vertical-orientation">
@@ -136,7 +148,7 @@
                 </div>
 
                 <label for="application-notes">Notizen</label>
-                <textarea id="application-notes" rows="3" placeholder="Notizen zur Bewerbung (optional)"></textarea>
+                <textarea id="application-notes" rows="3" maxlength="240" placeholder="Notizen zur Bewerbung (optional)"></textarea>
                 <button id="add-application-button" type="submit">
                     <img src="assets/icons/icon_plus.svg">
                     <p>Bewerbung hinzufügen</p>

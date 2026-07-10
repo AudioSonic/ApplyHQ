@@ -52,6 +52,13 @@
     min-height: 96px;
     min-width: 0;
     padding: 18px;
+    transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.overview-card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: 0 16px 34px rgba(31, 41, 55, 0.08);
+    transform: translateY(-2px);
 }
 
 .overview-card-icon {
@@ -172,6 +179,13 @@
     width: 100%;
 }
 
+#new-application input:user-invalid,
+#new-application select:user-invalid,
+#new-application textarea:user-invalid {
+    border-color: var(--color-dark-red);
+    box-shadow: 0 0 0 3px rgba(232, 39, 46, 0.1);
+}
+
 #new-application input,
 #new-application select {
     height: 42px;
@@ -214,6 +228,23 @@
 #add-application-button:hover {
     background-color: var(--color-primary-hover);
     transform: translateY(-1px);
+}
+
+#add-application-button:active,
+.theme-toggle:active,
+.icon-button:active {
+    transform: translateY(0);
+}
+
+#add-application-button:focus-visible,
+.theme-toggle:focus-visible,
+.icon-button:focus-visible,
+.sort-control select:focus-visible,
+#new-application input:focus-visible,
+#new-application select:focus-visible,
+#new-application textarea:focus-visible {
+    outline: 3px solid rgba(82, 41, 211, 0.18);
+    outline-offset: 2px;
 }
 
 #add-application-button img {
@@ -290,6 +321,7 @@
 }
 
 .application-card {
+    animation: card-enter 220ms ease both;
     align-items: center;
     background-color: var(--color-surface);
     border: 1px solid var(--color-border-strong);
@@ -300,6 +332,13 @@
     grid-template-columns: 74px minmax(0, 1fr) auto;
     min-width: 0;
     padding: 22px;
+    transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.application-card:hover {
+    border-color: var(--color-primary-soft);
+    box-shadow: 0 14px 34px rgba(31, 41, 55, 0.08);
+    transform: translateY(-2px);
 }
 
 .application-logo {
@@ -338,6 +377,14 @@
     color: #344054;
     font-size: 15px;
     margin-top: 4px;
+    font-weight: 600;
+}
+
+.application-location {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    font-weight: 200;
+    margin-top: 3px;
 }
 
 .application-date {
@@ -362,6 +409,7 @@
     color: #344054;
     font-size: 14px;
     margin-top: 8px;
+    max-width: 62ch;
 }
 
 .status-and-delete {
@@ -382,18 +430,18 @@
 }
 
 .status-open {
-    background-color: var(--color-primary-soft);
-    color: var(--color-primary);
-}
-
-.status-applied {
     background-color: var(--color-light-blue);
     color: var(--color-dark-blue);
 }
 
-.status-interview {
+.status-applied {
     background-color: var(--color-light-orange);
     color: var(--color-dark-orange);
+}
+
+.status-interview {
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary);
 }
 
 .status-rejected {
@@ -431,6 +479,40 @@
     width: 22px;
 }
 
+@keyframes card-enter {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 1ms !important;
+        scroll-behavior: auto !important;
+        transition-duration: 1ms !important;
+    }
+}
+
+@media (max-width: 900px) {
+    .application-card {
+        grid-template-columns: 68px minmax(0, 1fr) auto;
+    }
+
+    .application-logo {
+        font-size: 25px;
+        height: 68px;
+        width: 68px;
+    }
+}
+
 @media (max-width: 640px) {
     .panel {
         padding: 18px;
@@ -446,9 +528,11 @@
 
     .panel-header {
         flex-direction: column;
+        padding: 18px;
     }
 
     .sort-control {
+        justify-content: space-between;
         width: 100%;
     }
 
@@ -472,5 +556,34 @@
 
     .status-badge {
         min-width: 0;
+    }
+}
+
+@media (max-width: 420px) {
+    .app-header h1 {
+        font-size: 24px;
+    }
+
+    .app-header p {
+        font-size: 14px;
+    }
+
+    .theme-toggle {
+        height: 38px;
+        width: 38px;
+    }
+
+    .application-card {
+        gap: 14px;
+        grid-template-columns: 1fr;
+    }
+
+    .application-logo {
+        height: 54px;
+        width: 54px;
+    }
+
+    .status-and-delete {
+        grid-column: auto;
     }
 }

@@ -20,10 +20,11 @@ function renderApplications(){
     checkForEmptyState();
     applicationList.replaceChildren();
     applicationCount.textContent = applications.length;
+    sortApplications(applicationSort.value);
 
     applications.forEach((application) => {
         createApplicationCard(application);
-    })
+    });
     updateDashboard();
 }
 
@@ -32,6 +33,7 @@ function createApplicationCard(application){
     const logoFrame = document.createElement("div");
     const companyName = document.createElement("h3");
     const position = document.createElement("p");
+    const location = document.createElement("p");
     const status = document.createElement("span");
     const dateRow = document.createElement("div");
     const applicationDate = document.createElement("p");
@@ -46,6 +48,7 @@ function createApplicationCard(application){
     
     companyName.textContent = application.company;
     position.textContent = application.position;
+    location.textContent = formatApplicationLocation(application);
     status.textContent = statusLabels[application.status] || application.status;
     applicationDate.textContent = formatApplicationDate(application.date);
     notes.textContent = application.notes || "Keine Notizen hinterlegt.";
@@ -57,6 +60,7 @@ function createApplicationCard(application){
     logoFrame.classList.add("application-logo");
     information.classList.add("application-info");
     position.classList.add("application-position");
+    location.classList.add("application-location");
     dateRow.classList.add("application-date");
     notes.classList.add("application-notes");
     status.classList.add("status-badge", `status-${application.status}`);
@@ -84,6 +88,11 @@ function createApplicationCard(application){
 
     information.appendChild(companyName);
     information.appendChild(position);
+
+    if(location.textContent){
+        information.appendChild(location);
+    }
+
     information.appendChild(dateRow);
     information.appendChild(notes);
 
@@ -102,21 +111,35 @@ function formatApplicationDate(date){
         return "Kein Datum";
     }
 
-    return new Date(date).toLocaleDateString("de-DE", {
+    const parsedDate = new Date(date);
+
+    if(Number.isNaN(parsedDate.getTime())){
+        return "Kein Datum";
+    }
+
+    return parsedDate.toLocaleDateString("de-DE", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric"
     });
 }
 
+function formatApplicationLocation(application){
+    return [application.city, application.state]
+        .filter(Boolean)
+        .join(" - ");
+}
+
 function getCompanyInitials(company){
-    return company
+    const initials = company
         .split(" ")
         .filter(Boolean)
         .slice(0, 2)
         .map(word => word[0])
         .join("")
         .toUpperCase();
+
+    return initials || "?";
 }
 
 function checkForEmptyState(){
