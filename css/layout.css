@@ -1,9 +1,19 @@
 /* Page and section layout */
 
-.app-header,
+body {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+}
+
+.app-sidebar {
+    min-height: 100vh;
+    position: sticky;
+    top: 0;
+}
+
 main {
-    width: min(100% - 40px, var(--page-max-width));
     margin-inline: auto;
+    width: min(100% - 40px, var(--page-max-width));
 }
 
 .app-header {
@@ -41,7 +51,8 @@ main {
 }
 
 #new-application {
-    display: flex;
+    /*display: flex;*/
+    display: none;
     flex-direction: column;
     gap: 0;
 }
@@ -59,8 +70,31 @@ main {
     min-width: 0;
 }
 
+#sort-and-filter{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+#application-searchbar{
+    width: 100%;
+    height: 35px;
+    padding: 5px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: var(--border-radius);
+
+}
+
+#application-overview-settings{
+    width: 100%;
+}
+
 @media (max-width: 900px) {
-    .app-header,
+    body {
+        grid-template-columns: 86px minmax(0, 1fr);
+    }
+
     main {
         width: min(100% - 32px, var(--page-max-width));
     }
@@ -74,8 +108,19 @@ main {
     }
 }
 
-@media (max-width: 640px) {
-    .app-header,
+@media (max-width: 768px) {
+    body {
+        display: block;
+    }
+
+    .app-sidebar {
+        left: 0;
+        min-height: 100dvh;
+        position: fixed;
+        top: 0;
+        z-index: 40;
+    }
+
     main {
         width: min(100% - 24px, var(--page-max-width));
     }
@@ -86,7 +131,7 @@ main {
     }
 
     main {
-        padding-block: 26px 34px;
+        padding-block: 82px 34px;
     }
 
     #overview {
@@ -100,7 +145,6 @@ main {
 }
 
 @media (max-width: 420px) {
-    .app-header,
     main {
         width: min(100% - 18px, var(--page-max-width));
     }
