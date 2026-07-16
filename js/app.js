@@ -8,11 +8,13 @@ const applicationStatus = document.getElementById("application-status");
 const applicationNotes = document.getElementById("application-notes");
 const applicationForm = document.getElementById("new-application");
 const applicationSort = document.getElementById("application-sort");
+const applicationButton = document.getElementById("open-application-modal-button");
 
 applicationForm.addEventListener("submit", submitApplication);
 applicationSort.addEventListener("change", handleSortChange);
 applicationCompany.addEventListener("input", clearApplicationValidation);
 applicationPosition.addEventListener("input", clearApplicationValidation);
+applicationButton.addEventListener("click", openApplicationModal);
 
 init();
 
@@ -80,4 +82,8 @@ function setDefaultApplicationDate(){
 function handleSortChange(){
     sortApplications(applicationSort.value);
     renderApplications();
+}
+
+function openApplicationModal(){
+    createModal();
 }
