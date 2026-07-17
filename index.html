@@ -181,53 +181,6 @@
 
             </section>
             <section id="applications">
-                <form id="new-application" class="panel">
-                    <h2>Neue Bewerbung anlegen</h2>
-                    <label for="application-company">Unternehmen <span aria-hidden="true">*</span></label>
-                    <input id="application-company" type="text" placeholder="z. B. Tech Solutions GmbH" minlength="2" maxlength="80" required>
-
-                    <label for="application-position">Stellenbezeichnung <span aria-hidden="true">*</span></label>
-                    <input id="application-position" type="text" placeholder="z. B. Frontend Entwickler (m/w/d)" minlength="2" maxlength="100" required>
-
-                    <div class="horizontal-orientation">
-                        <div class="vertical-orientation">
-                            <label for="application-city">Stadt</label>
-                            <input id="application-city" type="text" placeholder="z. B. Berlin" maxlength="80">
-                        </div>
-
-                        <div class="vertical-orientation">
-                            <label for="application-state">Bundesland</label>
-                            <input id="application-state" type="text" placeholder="z. B. Berlin" maxlength="80">
-                        </div>
-                    </div>
-                    
-                    <div class="horizontal-orientation">
-                        <div class="vertical-orientation">
-                            <label for="application-date">Bewerbungsdatum</label>
-                            <input id="application-date" type="date" required>
-                        </div>
-                        
-                        <div class="vertical-orientation">
-                            <label for="application-status">Status</label>
-                            <select id="application-status" name="status">
-                                <option value="open">Offen</option>
-                                <option value="applied">Beworben</option>
-                                <option value="interview">Interview</option>
-                                <option value="rejected">Absage</option>
-                                <option value="accepted">Zusage</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <label for="application-notes">Notizen</label>
-                    <textarea id="application-notes" rows="3" maxlength="240" placeholder="Notizen zur Bewerbung (optional)"></textarea>
-                    <button id="add-application-button" type="submit">
-                        <img src="assets/icons/icon_plus.svg">
-                        <p>Bewerbung hinzufügen</p>
-                    </button>
-
-                </form>
-
                 <section id="application-overview" class="panel">
                     <div class="panel-header">
                         <div id="application-overview-settings">
@@ -264,7 +217,7 @@
                     </div>
 
                     <footer class="panel-footer">
-                        <button id="add-application-button">
+                        <button class="add-application-button" id="open-application-modal-button" type="button">
                             Bewerbung manuell hinzufügen
                         </button>
                     </footer>
@@ -275,6 +228,8 @@
     <script src="js/applications.js"></script>
     <script src="js/render.js"></script>
     <script src="js/storage.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/applicationModal.js"></script>
     <script src="js/app.js"></script>
 </body>
 

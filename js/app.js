@@ -1,52 +1,46 @@
-
-const applicationCompany = document.getElementById("application-company");
-const applicationPosition = document.getElementById("application-position");
-const applicationCity = document.getElementById("application-city");
-const applicationState = document.getElementById("application-state");
-const applicationDate = document.getElementById("application-date");
-const applicationStatus = document.getElementById("application-status");
-const applicationNotes = document.getElementById("application-notes");
-const applicationForm = document.getElementById("new-application");
 const applicationSort = document.getElementById("application-sort");
+const applicationButton = document.getElementById("open-application-modal-button");
 
-applicationForm.addEventListener("submit", submitApplication);
+applicationButton.addEventListener("click", loadModal);
 applicationSort.addEventListener("change", handleSortChange);
-applicationCompany.addEventListener("input", clearApplicationValidation);
-applicationPosition.addEventListener("input", clearApplicationValidation);
 
 init();
 
 function submitApplication(event){
     event.preventDefault();
 
-    if(!validateApplicationForm()){
+    const applicationForm = event.currentTarget;
+
+    if(!validateApplicationForm(applicationForm)){
         return;
     }
 
-    const applicationData = getApplicationFormData();
+    const applicationData = getApplicationFormData(applicationForm);
     addApplication(applicationData);
-    resetApplicationForm();
+    closeModal(applicationForm.closest(".modal-container"));
 }
 
 function init(){
-    setDefaultApplicationDate();
     loadApplications();
 }
 
-function getApplicationFormData(){
+function getApplicationFormData(applicationForm){
     return {
-        company: applicationCompany.value.trim(),
-        position: applicationPosition.value.trim(),
-        city: applicationCity.value.trim(),
-        state: applicationState.value.trim(),
-        date: applicationDate.value,
-        status: applicationStatus.value,
-        notes: applicationNotes.value.trim()
+        company: applicationForm.querySelector("#application-company").value.trim(),
+        position: applicationForm.querySelector("#application-position").value.trim(),
+        city: applicationForm.querySelector("#application-city").value.trim(),
+        state: applicationForm.querySelector("#application-state").value.trim(),
+        date: applicationForm.querySelector("#application-date").value,
+        status: applicationForm.querySelector("#application-status").value,
+        notes: applicationForm.querySelector("#application-notes").value.trim()
     };
 }
 
-function validateApplicationForm(){
-    clearApplicationValidation();
+function validateApplicationForm(applicationForm){
+    const applicationCompany = applicationForm.querySelector("#application-company");
+    const applicationPosition = applicationForm.querySelector("#application-position");
+
+    clearApplicationValidation(applicationForm);
 
     if(applicationCompany.value.trim().length < 2){
         applicationCompany.setCustomValidity("Bitte gib ein Unternehmen mit mindestens 2 Zeichen ein.");
@@ -59,19 +53,14 @@ function validateApplicationForm(){
     return applicationForm.reportValidity();
 }
 
-function clearApplicationValidation(){
-    applicationCompany.setCustomValidity("");
-    applicationPosition.setCustomValidity("");
+function clearApplicationValidation(eventOrForm){
+    const applicationForm = eventOrForm.currentTarget ? eventOrForm.currentTarget.form : eventOrForm;
+
+    applicationForm.querySelector("#application-company").setCustomValidity("");
+    applicationForm.querySelector("#application-position").setCustomValidity("");
 }
 
-function resetApplicationForm(){
-    applicationForm.reset();
-    clearApplicationValidation();
-    setDefaultApplicationDate();
-    applicationCompany.focus();
-}
-
-function setDefaultApplicationDate(){
+function setDefaultApplicationDate(applicationDate){
     const today = new Date().toISOString().split("T")[0];
     applicationDate.max = today;
     applicationDate.value = today;
@@ -80,4 +69,10 @@ function setDefaultApplicationDate(){
 function handleSortChange(){
     sortApplications(applicationSort.value);
     renderApplications();
+}
+
+function loadModal(){
+    const modal = createModal();
+    const content = createApplicationModal();
+    modal.content.append(content);
 }

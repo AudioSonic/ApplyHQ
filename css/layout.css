@@ -52,7 +52,7 @@ main {
 
 #new-application {
     /*display: flex;*/
-    display: none;
+    display: flex;
     flex-direction: column;
     gap: 0;
 }

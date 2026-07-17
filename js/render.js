@@ -162,3 +162,4 @@ function updateDashboard(){
 function countApplicationsByStatus(status){
     return applications.filter(application => application.status === status).length;
 }
+

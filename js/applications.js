@@ -38,4 +38,3 @@ function getApplicationById(id){
     return applications.find(application => application.id === id);
 }
 
-
