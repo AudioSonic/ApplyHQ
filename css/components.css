@@ -242,18 +242,18 @@
     width: 100%;
 }
 
-#add-application-button:hover {
+.add-application-button:hover {
     background-color: var(--color-primary-hover);
     transform: translateY(-1px);
 }
 
-#add-application-button:active,
+.add-application-button:active,
 .theme-toggle:active,
 .icon-button:active {
     transform: translateY(0);
 }
 
-#add-application-button:focus-visible,
+.add-application-button:focus-visible,
 .theme-toggle:focus-visible,
 .icon-button:focus-visible,
 .sort-control select:focus-visible,
@@ -266,12 +266,12 @@
     outline-offset: 2px;
 }
 
-#add-application-button img {
+.add-application-button img {
     height: 22px;
     width: 22px;
 }
 
-#add-application-button p {
+.add-application-button p {
     color: var(--color-text-light);
     font-size: 13px;
     font-weight: 700;
@@ -620,31 +620,6 @@
 .sidebar-menu-button,
 .sidebar-backdrop {
     display: none;
-}
-
-.modal-container{
-    box-sizing: border-box;
-    position: fixed;
-    top:0;
-    left:0;
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0,0,0,0.5);;
-}
-
-.modal{
-    background-color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: 100%;
-    width: 600px;
-    padding: 30px 50px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 @keyframes card-enter {
