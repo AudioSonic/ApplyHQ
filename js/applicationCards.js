@@ -17,14 +17,25 @@ const statusLabels = {
 };
 
 function renderApplications(){
+    const filteredApplications = applications.filter((application) => {
+    const company = application.company.toLowerCase();
+    const position = application.position.toLowerCase();
+
+    return (
+        company.includes(uiState.search) ||
+        position.includes(uiState.search)
+    );});
+    
     checkForEmptyState();
     applicationList.replaceChildren();
-    applicationCount.textContent = applications.length;
-    sortApplications(applicationSort.value);
+    applicationCount.textContent = filteredApplications.length;
 
-    applications.forEach((application) => {
+
+    filteredApplications.forEach((application) => {
         createApplicationCard(application);
     });
+
+    sortApplications(filteredApplications,uiState.sort);
     updateDashboard();
 }
 

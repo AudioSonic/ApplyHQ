@@ -1,8 +1,16 @@
 const applicationSort = document.getElementById("application-sort");
+const applicationFilter = document.getElementById("application-filter");
 const applicationButton = document.getElementById("open-application-modal-button");
 
 applicationButton.addEventListener("click", () => openApplicationModal());
 applicationSort.addEventListener("change", handleSortChange);
+applicationFilter.addEventListener("change", handleFilterChange);
+
+const uiState = {
+    search: "",
+    status: "all",
+    sort: "date-desc"
+};
 
 init();
 
@@ -68,8 +76,13 @@ function setDefaultApplicationDate(applicationDate){
     applicationDate.value = today;
 }
 
-function handleSortChange(){
-    sortApplications(applicationSort.value);
+function handleSortChange() {
+    uiState.sort = applicationSort.value;
+    renderApplications();
+}
+
+function handleFilterChange() {
+    uiState.filter = applicationFilter.value;
     renderApplications();
 }
 
