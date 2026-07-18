@@ -98,7 +98,7 @@ function createApplicationCard(application){
         logoFrame.appendChild(logoFallback);
     }
 
-    if (application.tag) {
+    if (application.tag && application.tag !== "-") {
         tag.textContent = application.tag;
         details.style.justifyContent = "center";
         details.style.flexDirection = "column-reverse"
@@ -109,6 +109,7 @@ function createApplicationCard(application){
     }
 
     deleteButton.addEventListener("click", () => {deleteApplication(application.id)});
+    editButton.addEventListener("click", () => openApplicationModal(application));
 
     deleteButton.appendChild(deleteButtonIcon);
     editButton.appendChild(editButtonIcon);
@@ -124,8 +125,6 @@ function createApplicationCard(application){
 
     information.appendChild(dateRow);
     information.appendChild(notes);
-
-    tag.textContent = "Junior";
 
     details.appendChild(status);
     options.append(deleteButton, editButton);
