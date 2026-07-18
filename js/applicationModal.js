@@ -1,4 +1,4 @@
-function createApplicationModal(){
+function createApplicationModal(application = null){
     const form = document.createElement("form");
 
     const companyLabel = createLabel("application-company", "Unternehmen *");
@@ -78,6 +78,7 @@ function createApplicationModal(){
     );
 
     tagSelect.append(
+        createOption("-", "-"),
         createOption("junior", "Junior"),
         createOption("initiative", "Initiativ")
     );
@@ -96,9 +97,17 @@ function createApplicationModal(){
     submitButton.type = "submit";
     submitIcon.src = "assets/icons/icon_plus.svg";
     submitIcon.alt = "";
-    submitText.textContent = "Bewerbung hinzufügen";
+    submitText.textContent = application
+    ? "Änderungen speichern"
+    : "Bewerbung hinzufügen";
 
-    form.addEventListener("submit", submitApplication);
+    form.addEventListener("submit", event => {
+        if (application) {
+            saveApplicationEdit(event, application);
+        } else {
+            submitApplication(event);
+        }
+    });
     companyInput.addEventListener("input", clearApplicationValidation);
     positionInput.addEventListener("input", clearApplicationValidation);
 
@@ -127,6 +136,18 @@ function createApplicationModal(){
         submitButton
     );
 
+    if (application) {
+        companyInput.value = application.company || "";
+        positionInput.value = application.position || "";
+        cityInput.value = application.city || "";
+        stateInput.value = application.state || "";
+        dateInput.value = application.date || dateInput.value;
+        statusSelect.value = application.status || "open";
+        urlInput.value = application.url || "";
+        tagSelect.value = application.tag || "junior";
+        notesTextarea.value = application.notes || "";
+    }
+
     return form;
 }
 
@@ -150,4 +171,30 @@ function createOption(value, text){
     option.value = value;
     option.textContent = text;
     return option;
+}
+
+function saveApplicationEdit(event, application){
+    event.preventDefault();
+
+    const applicationForm = event.currentTarget;
+
+    if(!validateApplicationForm(applicationForm)){
+        return;
+    }
+
+    const applicationData = getApplicationFormData(applicationForm);
+
+    application.company = applicationData.company;
+    application.position = applicationData.position;
+    application.city = applicationData.city;
+    application.state = applicationData.state;
+    application.date = applicationData.date;
+    application.status = applicationData.status;
+    application.tag = applicationData.tag;
+    application.url = applicationData.url;
+    application.notes = applicationData.notes;
+
+    saveApplications();
+    renderApplications();
+    closeModal(applicationForm.closest(".modal-container"));
 }

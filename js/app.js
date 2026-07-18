@@ -1,7 +1,7 @@
 const applicationSort = document.getElementById("application-sort");
 const applicationButton = document.getElementById("open-application-modal-button");
 
-applicationButton.addEventListener("click", loadModal);
+applicationButton.addEventListener("click", () => openApplicationModal());
 applicationSort.addEventListener("change", handleSortChange);
 
 init();
@@ -32,8 +32,8 @@ function getApplicationFormData(applicationForm){
         state: applicationForm.querySelector("#application-state").value.trim(),
         date: applicationForm.querySelector("#application-date").value,
         status: applicationForm.querySelector("#application-status").value,
-        tag: applicationForm.querySelector("#application-tag"),
-        url: applicationForm.querySelector("application-url"),
+        tag: applicationForm.querySelector("#application-tag").value,
+        url: applicationForm.querySelector("#application-url").value.trim(),
         notes: applicationForm.querySelector("#application-notes").value.trim()
     };
 }
@@ -73,10 +73,11 @@ function handleSortChange(){
     renderApplications();
 }
 
-function loadModal(){
+function openApplicationModal(application = null){
     const modal = createModal();
-    const content = createApplicationModal();
-    modal.title.textContent = "Neue Bewerbung anlegen";
+    const content = createApplicationModal(application);
+    modal.title.textContent = application ? "Bewerbung bearbeiten" : "Neue Bewerbung anlegen";
     modal.content.append(content);
-
 }
+
+
