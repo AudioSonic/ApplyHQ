@@ -153,23 +153,6 @@
     border-top: 1px solid var(--color-border);
 }
 
-#new-application h2 {
-    font-size: 18px;
-    margin-bottom: 28px;
-    position: relative;
-}
-
-#new-application h2::after {
-    background-color: var(--color-primary);
-    border-radius: 999px;
-    bottom: -12px;
-    content: "";
-    height: 2px;
-    left: 0;
-    position: absolute;
-    width: 58px;
-}
-
 #new-application label {
     color: var(--color-text);
     font-size: 13px;
@@ -266,17 +249,6 @@
     outline-offset: 2px;
 }
 
-.add-application-button img {
-    height: 22px;
-    width: 22px;
-}
-
-.add-application-button p {
-    color: var(--color-text-light);
-    font-size: 13px;
-    font-weight: 700;
-}
-
 .panel-header {
     align-items: flex-start;
     border-bottom: 1px solid var(--color-border);
@@ -332,113 +304,7 @@
     padding: 4px 20px 4px 0;
 }
 
-#application-list {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    flex: 1;
-    gap: 14px;
-    padding: 14px 18px 18px;
-}
 
-.application-card {
-    animation: card-enter 220ms ease both;
-    align-items: center;
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border-strong);
-    border-radius: 12px;
-    box-shadow: 0 8px 22px rgba(31, 41, 55, 0.05);
-    display: grid;
-    gap: 20px;
-    grid-template-columns: 74px minmax(0, 1fr) auto;
-    min-width: 500px;
-    padding: 22px;
-    transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
-}
-
-.application-card:hover {
-    border-color: var(--color-primary-soft);
-    box-shadow: 0 14px 34px rgba(31, 41, 55, 0.08);
-    transform: translateY(-2px);
-}
-
-.application-logo {
-    align-items: center;
-    align-self: start;
-    background: linear-gradient(135deg, #e8f2ff, #f4f0ff);
-    border-radius: 10px;
-    color: var(--color-primary);
-    display: flex;
-    font-size: 28px;
-    font-weight: 800;
-    height: 74px;
-    justify-content: center;
-    overflow: hidden;
-    width: 74px;
-}
-
-.application-logo img {
-    height: 100%;
-    object-fit: cover;
-    width: 100%;
-}
-
-.application-info {
-    min-width: 0;
-}
-
-.application-info h3 {
-    color: var(--color-text);
-    font-size: 18px;
-    font-weight: 800;
-    line-height: 1.25;
-}
-
-.application-position {
-    color: #344054;
-    font-size: 15px;
-    margin-top: 4px;
-    font-weight: 600;
-}
-
-.application-location {
-    color: var(--color-text-secondary);
-    font-size: 14px;
-    font-weight: 200;
-    margin-top: 3px;
-}
-
-.application-date {
-    align-items: center;
-    display: flex;
-    gap: 8px;
-    margin-top: 10px;
-}
-
-.application-date img {
-    height: 16px;
-    width: 16px;
-}
-
-.application-date p {
-    color: #111827;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.application-notes {
-    color: #344054;
-    font-size: 14px;
-    margin-top: 8px;
-    max-width: 62ch;
-}
-
-.status-and-delete {
-    align-self: start;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
 
 .status-badge {
     border-radius: 999px;
@@ -453,6 +319,11 @@
 .status-open {
     background-color: var(--color-light-blue);
     color: var(--color-dark-blue);
+}
+
+.tag {
+    background-color: var(--color-tag);
+    color: var(--color-text-secondary);
 }
 
 .status-applied {
@@ -674,16 +545,6 @@
         justify-content: center;
         padding-left: 0;
     }
-
-    .application-card {
-        grid-template-columns: 68px minmax(0, 1fr) auto;
-    }
-
-    .application-logo {
-        font-size: 25px;
-        height: 68px;
-        width: 68px;
-    }
 }
 
 @media (max-width: 768px) {
@@ -861,24 +722,6 @@
         width: 100%;
     }
 
-    .application-card {
-        align-items: start;
-        grid-template-columns: 58px minmax(0, 1fr);
-        padding: 16px;
-    }
-
-    .application-logo {
-        font-size: 22px;
-        height: 58px;
-        width: 58px;
-    }
-
-    .status-and-delete {
-        grid-column: 1 / -1;
-        justify-content: space-between;
-        width: 100%;
-    }
-
     .status-badge {
         min-width: 0;
     }
@@ -896,19 +739,5 @@
     .theme-toggle {
         height: 38px;
         width: 38px;
-    }
-
-    .application-card {
-        gap: 14px;
-        grid-template-columns: 1fr;
-    }
-
-    .application-logo {
-        height: 54px;
-        width: 54px;
-    }
-
-    .status-and-delete {
-        grid-column: auto;
     }
 }

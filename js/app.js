@@ -32,6 +32,8 @@ function getApplicationFormData(applicationForm){
         state: applicationForm.querySelector("#application-state").value.trim(),
         date: applicationForm.querySelector("#application-date").value,
         status: applicationForm.querySelector("#application-status").value,
+        tag: applicationForm.querySelector("#application-tag"),
+        url: applicationForm.querySelector("application-url"),
         notes: applicationForm.querySelector("#application-notes").value.trim()
     };
 }
@@ -74,5 +76,7 @@ function handleSortChange(){
 function loadModal(){
     const modal = createModal();
     const content = createApplicationModal();
+    modal.title.textContent = "Neue Bewerbung anlegen";
     modal.content.append(content);
+
 }

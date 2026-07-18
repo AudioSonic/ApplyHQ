@@ -35,6 +35,7 @@ function createApplicationCard(application){
     const position = document.createElement("p");
     const location = document.createElement("p");
     const status = document.createElement("span");
+    const tag = document.createElement("span");
     const dateRow = document.createElement("div");
     const applicationDate = document.createElement("p");
     const notes = document.createElement("p");
@@ -43,13 +44,18 @@ function createApplicationCard(application){
     const calendarIcon = document.createElement("img");
     const information = document.createElement("div");
     const deleteButton = document.createElement("button");
-    const statusAndDelete = document.createElement("div");
     const deleteButtonIcon = document.createElement("img");
+    const editButton = document.createElement("button");
+    const editButtonIcon = document.createElement("img");
+    const detailsAndOptions = document.createElement("div");
+    const details = document.createElement("div");
+    const options = document.createElement("div");
     
     companyName.textContent = application.company;
     position.textContent = application.position;
     location.textContent = formatApplicationLocation(application);
     status.textContent = statusLabels[application.status] || application.status;
+    tag.textContent = application.tag;
     applicationDate.textContent = formatApplicationDate(application.date);
     notes.textContent = application.notes;
     logoFallback.textContent = getCompanyInitials(application.company);
@@ -63,13 +69,25 @@ function createApplicationCard(application){
     location.classList.add("application-location");
     dateRow.classList.add("application-date");
     notes.classList.add("application-notes");
+
+    detailsAndOptions.classList.add("application-actions");
+    details.classList.add("application-tags");
+    options.classList.add("application-buttons");
+    tag.classList.add("status-badge");
+    tag.classList.add("tag");
+
     status.classList.add("status-badge", `status-${application.status}`);
-    statusAndDelete.classList.add("status-and-delete");
     deleteButton.type = "button";
     deleteButton.setAttribute("aria-label", `Bewerbung von ${application.company} löschen`);
     deleteButtonIcon.src = "assets/icons/icon_delete.svg";
     deleteButtonIcon.alt = "";
     deleteButton.classList.add("icon-button");
+
+    editButton.type = "button";
+    editButton.setAttribute("aria-label", `Bewerbung von ${application.company} löschen`);
+    editButtonIcon.src = "assets/icons/icon_edit.svg";
+    editButtonIcon.alt = "";
+    editButton.classList.add("icon-button");
 
     if(application.logo){
         logo.src = application.logo;
@@ -80,9 +98,20 @@ function createApplicationCard(application){
         logoFrame.appendChild(logoFallback);
     }
 
+    if (application.tag) {
+        tag.textContent = application.tag;
+        details.style.justifyContent = "center";
+        details.style.flexDirection = "column-reverse"
+        details.appendChild(tag);
+    }
+    else{
+        details.style.justifyContent = "flex-start";
+    }
+
     deleteButton.addEventListener("click", () => {deleteApplication(application.id)});
 
     deleteButton.appendChild(deleteButtonIcon);
+    editButton.appendChild(editButtonIcon);
     dateRow.appendChild(calendarIcon);
     dateRow.appendChild(applicationDate);
 
@@ -96,12 +125,15 @@ function createApplicationCard(application){
     information.appendChild(dateRow);
     information.appendChild(notes);
 
-    statusAndDelete.appendChild(status);
-    statusAndDelete.appendChild(deleteButton);
+    tag.textContent = "Junior";
 
-    applicationCard.appendChild(logoFrame);
+    details.appendChild(status);
+    options.append(deleteButton, editButton);
+    detailsAndOptions.append(details, options);
+
+    applicationCard.append(logoFrame);
     applicationCard.appendChild(information);
-    applicationCard.appendChild(statusAndDelete);
+    applicationCard.appendChild(detailsAndOptions);
 
     applicationList.appendChild(applicationCard);
 }

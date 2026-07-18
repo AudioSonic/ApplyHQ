@@ -26,14 +26,27 @@
 }
 
 .modal-header {
-    align-items: center;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     padding: 14px 16px 0;
 }
 
 .modal-header h2 {
-    display: none;
+    margin: 0;
+    font-size: 18px;
+    position: relative;
+}
+
+.modal-header h2::after {
+    background-color: var(--color-primary);
+    border-radius: 999px;
+    bottom: -12px;
+    content: "";
+    height: 2px;
+    left: 0;
+    position: absolute;
+    width: 58px;
 }
 
 .modal-content {
