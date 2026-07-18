@@ -11,6 +11,8 @@ function addApplication(applicationData){
         state: applicationData.state,
         date: applicationData.date,
         status: applicationData.status,
+        tag: applicationData.tag,
+        url: applicationData.url,
         notes: applicationData.notes,
         logo: null
     });

@@ -1,6 +1,5 @@
 function createApplicationModal(){
     const form = document.createElement("form");
-    const heading = document.createElement("h2");
 
     const companyLabel = createLabel("application-company", "Unternehmen *");
     const companyInput = createInput("application-company", "text", "z. B. Tech Solutions GmbH");
@@ -26,6 +25,15 @@ function createApplicationModal(){
     const statusLabel = createLabel("application-status", "Status");
     const statusSelect = document.createElement("select");
 
+    const detailsRow = document.createElement("div");
+    const urlColumn = document.createElement("div");
+    const urlLabel = createLabel("application-url", "Url");
+    const urlInput = createInput("application-url", "text", "https://www.indeed.com/");
+
+    const tagColumn = document.createElement("div");
+    const tagLabel = createLabel("application-tag","Stichwort");
+    const tagSelect = document.createElement("select");
+
     const notesLabel = createLabel("application-notes", "Notizen");
     const notesTextarea = document.createElement("textarea");
 
@@ -35,8 +43,6 @@ function createApplicationModal(){
 
     form.id = "new-application";
     form.classList.add("application-modal-form");
-
-    heading.textContent = "Neue Bewerbung anlegen";
 
     companyInput.minLength = 2;
     companyInput.maxLength = 80;
@@ -49,10 +55,13 @@ function createApplicationModal(){
     locationRow.classList.add("horizontal-orientation");
     cityColumn.classList.add("vertical-orientation");
     stateColumn.classList.add("vertical-orientation");
+    urlColumn.classList.add("vertical-orientation");
+    tagColumn.classList.add("vertical-orientation");
     cityInput.maxLength = 80;
     stateInput.maxLength = 80;
 
     infoRow.classList.add("horizontal-orientation");
+    detailsRow.classList.add("horizontal-orientation");
     dateColumn.classList.add("vertical-orientation");
     statusColumn.classList.add("vertical-orientation");
     dateInput.required = true;
@@ -67,6 +76,16 @@ function createApplicationModal(){
         createOption("rejected", "Absage"),
         createOption("accepted", "Zusage")
     );
+
+    tagSelect.append(
+        createOption("junior", "Junior"),
+        createOption("initiative", "Initiativ")
+    );
+    tagSelect.id = "application-tag";
+    tagSelect.name = "tag";
+    
+    urlInput.id = "application-url";
+    urlInput.name = "Url";
 
     notesTextarea.id = "application-notes";
     notesTextarea.rows = 3;
@@ -90,16 +109,19 @@ function createApplicationModal(){
     dateColumn.append(dateLabel, dateInput);
     statusColumn.append(statusLabel, statusSelect);
     infoRow.append(dateColumn, statusColumn);
+    detailsRow.append(urlColumn, tagColumn);
+    urlColumn.append(urlLabel, urlInput);
+    tagColumn.append(tagLabel, tagSelect);
 
     submitButton.append(submitIcon, submitText);
     form.append(
-        heading,
         companyLabel,
         companyInput,
         positionLabel,
         positionInput,
         locationRow,
         infoRow,
+        detailsRow,
         notesLabel,
         notesTextarea,
         submitButton
