@@ -17,26 +17,31 @@ const statusLabels = {
 };
 
 function renderApplications(){
-    const filteredApplications = applications.filter((application) => {
-    const company = application.company.toLowerCase();
-    const position = application.position.toLowerCase();
-
-    return (
-        company.includes(uiState.search) ||
-        position.includes(uiState.search)
-    );});
+    const visibleApplications = getVisibleApplications();
     
-    checkForEmptyState();
+    checkForEmptyState(visibleApplications);
     applicationList.replaceChildren();
-    applicationCount.textContent = filteredApplications.length;
+    applicationCount.textContent = visibleApplications.length;
 
-
-    filteredApplications.forEach((application) => {
+    visibleApplications.forEach((application) => {
         createApplicationCard(application);
     });
-
-    sortApplications(filteredApplications,uiState.sort);
     updateDashboard();
+}
+
+function getVisibleApplications(){
+    const searchValue = uiState.search.trim().toLowerCase();
+
+    const filteredApplications = applications.filter(application => {
+        const company = (application.company || "").toLowerCase();
+        const position = (application.position || "").toLowerCase();
+        const matchesSearch = !searchValue || company.includes(searchValue) || position.includes(searchValue);
+        const matchesFilter = uiState.filter === "all" || application.status === uiState.filter;
+
+        return matchesSearch && matchesFilter;
+    });
+
+    return sortApplications(filteredApplications, uiState.sort);
 }
 
 function createApplicationCard(application){
@@ -184,8 +189,8 @@ function getCompanyInitials(company){
     return initials || "?";
 }
 
-function checkForEmptyState(){
-    if(applications.length === 0){
+function checkForEmptyState(visibleApplications){
+    if(visibleApplications.length === 0){
         emptyState.style.display = "flex";
     }
     else{

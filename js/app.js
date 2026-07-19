@@ -8,8 +8,8 @@ applicationFilter.addEventListener("change", handleFilterChange);
 
 const uiState = {
     search: "",
-    status: "all",
-    sort: "date-desc"
+    filter: "all",
+    sort: "newest"
 };
 
 init();
@@ -29,21 +29,28 @@ function submitApplication(event){
 }
 
 function init(){
+    uiState.sort = applicationSort.value;
+    uiState.filter = applicationFilter.value;
     loadApplications();
 }
 
 function getApplicationFormData(applicationForm){
     return {
-        company: applicationForm.querySelector("#application-company").value.trim(),
-        position: applicationForm.querySelector("#application-position").value.trim(),
-        city: applicationForm.querySelector("#application-city").value.trim(),
-        state: applicationForm.querySelector("#application-state").value.trim(),
-        date: applicationForm.querySelector("#application-date").value,
-        status: applicationForm.querySelector("#application-status").value,
-        tag: applicationForm.querySelector("#application-tag").value,
-        url: applicationForm.querySelector("#application-url").value.trim(),
-        notes: applicationForm.querySelector("#application-notes").value.trim()
+        company: getFormValue(applicationForm, "#application-company"),
+        position: getFormValue(applicationForm, "#application-position"),
+        city: getFormValue(applicationForm, "#application-city"),
+        state: getFormValue(applicationForm, "#application-state"),
+        date: getFormValue(applicationForm, "#application-date"),
+        status: getFormValue(applicationForm, "#application-status"),
+        tag: getFormValue(applicationForm, "#application-tag"),
+        url: getFormValue(applicationForm, "#application-url"),
+        notes: getFormValue(applicationForm, "#application-notes")
     };
+}
+
+function getFormValue(applicationForm, selector){
+    const field = applicationForm.querySelector(selector);
+    return field ? field.value.trim() : "";
 }
 
 function validateApplicationForm(applicationForm){

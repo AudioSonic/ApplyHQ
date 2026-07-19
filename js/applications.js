@@ -29,15 +29,11 @@ function deleteApplication(id){
 }
 
 function sortApplications(applicationList, order){
-    applicationList.sort((firstApplication, secondApplication) => {
+    return [...applicationList].sort((firstApplication, secondApplication) => {
         const firstDate = new Date(firstApplication.date).getTime();
         const secondDate = new Date(secondApplication.date).getTime();
         return order === "oldest" ? firstDate - secondDate : secondDate - firstDate;
     });
-}
-
-function filterApplications(applicationList, order){
-
 }
 
 function getApplicationById(id){
