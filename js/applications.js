@@ -11,6 +11,8 @@ function addApplication(applicationData){
         state: applicationData.state,
         date: applicationData.date,
         status: applicationData.status,
+        tag: applicationData.tag,
+        url: applicationData.url,
         notes: applicationData.notes,
         logo: null
     });
@@ -26,8 +28,8 @@ function deleteApplication(id){
     renderApplications();
 }
 
-function sortApplications(order){
-    applications.sort((firstApplication, secondApplication) => {
+function sortApplications(applicationList, order){
+    return [...applicationList].sort((firstApplication, secondApplication) => {
         const firstDate = new Date(firstApplication.date).getTime();
         const secondDate = new Date(secondApplication.date).getTime();
         return order === "oldest" ? firstDate - secondDate : secondDate - firstDate;
@@ -37,5 +39,4 @@ function sortApplications(order){
 function getApplicationById(id){
     return applications.find(application => application.id === id);
 }
-
 

@@ -1,52 +1,114 @@
+let applicationSort = null;
+let applicationFilter = null;
+let applicationButton = null;
 
-const applicationCompany = document.getElementById("application-company");
-const applicationPosition = document.getElementById("application-position");
-const applicationCity = document.getElementById("application-city");
-const applicationState = document.getElementById("application-state");
-const applicationDate = document.getElementById("application-date");
-const applicationStatus = document.getElementById("application-status");
-const applicationNotes = document.getElementById("application-notes");
-const applicationForm = document.getElementById("new-application");
-const applicationSort = document.getElementById("application-sort");
+const uiState = {
+    search: "",
+    filter: "all",
+    sort: "newest"
+};
 
-applicationForm.addEventListener("submit", submitApplication);
-applicationSort.addEventListener("change", handleSortChange);
-applicationCompany.addEventListener("input", clearApplicationValidation);
-applicationPosition.addEventListener("input", clearApplicationValidation);
+document.addEventListener("DOMContentLoaded", () => {
+    bindNavigation();
+    loadDashboard();
+});
 
-init();
+function bindNavigation() {
+    document.querySelectorAll("[data-action]").forEach((navigationButton) => {
+        navigationButton.addEventListener("click", handleNavigationClick);
+    });
+}
 
-function submitApplication(event){
+function handleNavigationClick(event) {
+    const navigationButton = event.currentTarget;
+    const action = navigationButton.dataset.action;
+
+    event.preventDefault();
+    setActiveNavigationButton(navigationButton);
+    closeMobileSidebar();
+
+    switch(action){
+        case "loadDashboard":
+        loadDashboard();
+        break;
+        case "loadSettings":
+        loadSettings();
+        break;
+    }
+}
+
+function setActiveNavigationButton(activeButton) {
+    document.querySelectorAll(".navbar-button").forEach((button) => {
+        button.classList.toggle("is-active", button === activeButton);
+    });
+}
+
+function closeMobileSidebar() {
+    const sidebarToggle = document.getElementById("sidebar-toggle");
+
+    if(sidebarToggle){
+        sidebarToggle.checked = false;
+    }
+}
+
+function bindApplicationControls() {
+    applicationSort = document.getElementById("application-sort");
+    applicationFilter = document.getElementById("application-filter");
+    applicationButton = document.getElementById("open-application-modal-button");
+
+    if(applicationButton){
+        applicationButton.addEventListener("click", () => openApplicationModal());
+    }
+
+    if(applicationSort){
+        applicationSort.value = uiState.sort;
+        applicationSort.addEventListener("change", handleSortChange);
+    }
+
+    if(applicationFilter){
+        applicationFilter.value = uiState.filter;
+        applicationFilter.addEventListener("change", handleFilterChange);
+    }
+}
+
+function submitApplication(event) {
     event.preventDefault();
 
-    if(!validateApplicationForm()){
+    const applicationForm = event.currentTarget;
+
+    if(!validateApplicationForm(applicationForm)){
         return;
     }
 
-    const applicationData = getApplicationFormData();
+    const applicationData = getApplicationFormData(applicationForm);
     addApplication(applicationData);
-    resetApplicationForm();
+    closeModal(applicationForm.closest(".modal-container"));
 }
 
-function init(){
-    setDefaultApplicationDate();
-    loadApplications();
-}
-
-function getApplicationFormData(){
+function getApplicationFormData(applicationForm) {
     return {
-        company: applicationCompany.value.trim(),
-        position: applicationPosition.value.trim(),
-        city: applicationCity.value.trim(),
-        state: applicationState.value.trim(),
-        date: applicationDate.value,
-        status: applicationStatus.value,
-        notes: applicationNotes.value.trim()
+        company: getFormValue(applicationForm, "#application-company"),
+        position: getFormValue(applicationForm, "#application-position"),
+        city: getFormValue(applicationForm, "#application-city"),
+        state: getFormValue(applicationForm, "#application-state"),
+        date: getFormValue(applicationForm, "#application-date"),
+        status: getFormValue(applicationForm, "#application-status"),
+        tag: getFormValue(applicationForm, "#application-tag"),
+        url: getFormValue(applicationForm, "#application-url"),
+        notes: getFormValue(applicationForm, "#application-notes")
     };
 }
 
-function validateApplicationForm(){
-    clearApplicationValidation();
+function getFormValue(applicationForm, selector) {
+    const field = applicationForm.querySelector(selector);
+    return field ? field.value.trim() : "";
+}
+
+function validateApplicationForm(applicationForm) {
+    const applicationCompany = applicationForm.querySelector("#application-company");
+    const applicationPosition = applicationForm.querySelector("#application-position");
+
+    clearApplicationValidation(applicationForm);
 
     if(applicationCompany.value.trim().length < 2){
         applicationCompany.setCustomValidity("Bitte gib ein Unternehmen mit mindestens 2 Zeichen ein.");
@@ -59,25 +121,32 @@ function validateApplicationForm(){
     return applicationForm.reportValidity();
 }
 
-function clearApplicationValidation(){
-    applicationCompany.setCustomValidity("");
-    applicationPosition.setCustomValidity("");
+function clearApplicationValidation(eventOrForm) {
+    const applicationForm = eventOrForm.currentTarget ? eventOrForm.currentTarget.form : eventOrForm;
+
+    applicationForm.querySelector("#application-company").setCustomValidity("");
+    applicationForm.querySelector("#application-position").setCustomValidity("");
 }
 
-function resetApplicationForm(){
-    applicationForm.reset();
-    clearApplicationValidation();
-    setDefaultApplicationDate();
-    applicationCompany.focus();
-}
-
-function setDefaultApplicationDate(){
+function setDefaultApplicationDate(applicationDate) {
     const today = new Date().toISOString().split("T")[0];
     applicationDate.max = today;
     applicationDate.value = today;
 }
 
-function handleSortChange(){
-    sortApplications(applicationSort.value);
+function handleSortChange() {
+    uiState.sort = applicationSort.value;
     renderApplications();
+}
+
+function handleFilterChange() {
+    uiState.filter = applicationFilter.value;
+    renderApplications();
+}
+
+function openApplicationModal(application = null) {
+    const modal = createModal();
+    const content = createApplicationModal(application);
+    modal.title.textContent = application ? "Bewerbung bearbeiten" : "Neue Bewerbung anlegen";
+    modal.content.append(content);
 }

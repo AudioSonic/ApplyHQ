@@ -7,6 +7,7 @@
     --color-text: #111827;
     --color-text-secondary: #667085;
     --color-text-light: #ffffff;
+    --color-tag: #eeeaaf;
 
     --color-primary: #5229d3;
     --color-primary-hover: #4321af;
@@ -23,6 +24,8 @@
     --color-dark-red: #e8272e;
     --color-light-green: #daf8eb;
     --color-dark-green: #00b650;
+
+    --color-sidebar-background: #0F1B30;
 
     --shadow-panel: 0 18px 45px rgba(31, 41, 55, 0.08);
     --shadow-card: 0 12px 30px rgba(31, 41, 55, 0.06);
