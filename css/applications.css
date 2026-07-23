@@ -142,13 +142,15 @@
 .application-tags{
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
-    gap: 25px;
+    margin-top: 5px;
 }
 
 .application-tags.has-tag {
     flex-direction: column-reverse;
+    justify-content: center;
+    gap: 25px;
 }
 
 .add-application-button img {

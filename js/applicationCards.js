@@ -139,6 +139,9 @@ function createApplicationCard(application) {
         details.classList.add("has-tag");
         details.append(tag);
     }
+    else{
+        details.classList.add("no-tag");
+    }
 
     deleteButton.addEventListener("click", () => deleteApplication(application.id));
     editButton.addEventListener("click", () => openApplicationModal(application));
