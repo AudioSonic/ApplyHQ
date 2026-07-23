@@ -17,15 +17,31 @@ const statusLabels = {
 };
 
 function renderApplications(){
-    checkForEmptyState();
+    const visibleApplications = getVisibleApplications();
+    
+    checkForEmptyState(visibleApplications);
     applicationList.replaceChildren();
-    applicationCount.textContent = applications.length;
-    sortApplications(applicationSort.value);
+    applicationCount.textContent = visibleApplications.length;
 
-    applications.forEach((application) => {
+    visibleApplications.forEach((application) => {
         createApplicationCard(application);
     });
     updateDashboard();
+}
+
+function getVisibleApplications(){
+    const searchValue = uiState.search.trim().toLowerCase();
+
+    const filteredApplications = applications.filter(application => {
+        const company = (application.company || "").toLowerCase();
+        const position = (application.position || "").toLowerCase();
+        const matchesSearch = !searchValue || company.includes(searchValue) || position.includes(searchValue);
+        const matchesFilter = uiState.filter === "all" || application.status === uiState.filter;
+
+        return matchesSearch && matchesFilter;
+    });
+
+    return sortApplications(filteredApplications, uiState.sort);
 }
 
 function createApplicationCard(application){
@@ -173,8 +189,8 @@ function getCompanyInitials(company){
     return initials || "?";
 }
 
-function checkForEmptyState(){
-    if(applications.length === 0){
+function checkForEmptyState(visibleApplications){
+    if(visibleApplications.length === 0){
         emptyState.style.display = "flex";
     }
     else{
