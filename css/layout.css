@@ -11,8 +11,9 @@ body {
     top: 0;
 }
 
-main {
+.app-content {
     margin-inline: auto;
+    padding-top: 16px;
     width: min(100% - 40px, var(--page-max-width));
 }
 
@@ -20,16 +21,18 @@ main {
     align-items: center;
     background-color: rgba(255, 255, 255, 0.9);
     border: 1px solid var(--color-border);
-    border-radius: 0 0 var(--border-radius-panel) var(--border-radius-panel);
-    box-shadow: 0 10px 30px rgba(31, 41, 55, 0.05);
+    border-radius: 12px;
+    box-shadow: 0 8px 22px rgba(31, 41, 55, 0.04);
     display: flex;
-    gap: 20px;
+    gap: 16px;
     justify-content: space-between;
-    padding: 22px 26px;
+    margin-bottom: 22px;
+    padding: 14px 18px;
 }
 
 main {
-    padding-block: 34px 48px;
+    padding-bottom: 48px;
+    width: 100%;
 }
 
 .section-heading {
@@ -68,7 +71,7 @@ main {
         grid-template-columns: 86px minmax(0, 1fr);
     }
 
-    main {
+    .app-content {
         width: min(100% - 32px, var(--page-max-width));
     }
 
@@ -90,17 +93,21 @@ main {
         z-index: 40;
     }
 
-    main {
+    .app-content {
         width: min(100% - 24px, var(--page-max-width));
     }
 
     .app-header {
         align-items: flex-start;
-        padding: 18px;
+        padding: 14px 16px;
+    }
+
+    .app-content {
+        padding-top: 82px;
     }
 
     main {
-        padding-block: 82px 34px;
+        padding-bottom: 34px;
     }
 
     #overview {
@@ -114,7 +121,7 @@ main {
 }
 
 @media (max-width: 420px) {
-    main {
+    .app-content {
         width: min(100% - 18px, var(--page-max-width));
     }
 

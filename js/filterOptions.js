@@ -1,8 +1,17 @@
-const searchBar = document.getElementById("application-searchbar");
+let searchBar = null;
 
-searchBar.addEventListener("input", processSearchInput);
+function bindSearchControls() {
+    searchBar = document.getElementById("application-searchbar");
 
-function processSearchInput(){
-    uiState.search = searchBar.value.trim().toLowerCase();
+    if(!searchBar){
+        return;
+    }
+
+    searchBar.value = uiState.search;
+    searchBar.addEventListener("input", processSearchInput);
+}
+
+function processSearchInput(event) {
+    uiState.search = event.currentTarget.value.trim().toLowerCase();
     renderApplications();
 }
