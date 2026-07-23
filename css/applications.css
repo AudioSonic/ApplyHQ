@@ -147,6 +147,10 @@
     gap: 25px;
 }
 
+.application-tags.has-tag {
+    flex-direction: column-reverse;
+}
+
 .add-application-button img {
     height: 22px;
     width: 22px;

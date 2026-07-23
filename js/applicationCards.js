@@ -1,12 +1,12 @@
 /* Darstellung der Inhalte */
-const applicationList = document.getElementById("application-list");
-const emptyState = document.querySelector(".empty-state");
-const applicationCount = document.getElementById("application-count");
-const overviewOpen = document.getElementById("overview-open");
-const overviewApplied= document.getElementById("overview-applied");
-const overviewInterview = document.getElementById("overview-interviews");
-const overviewRejections = document.getElementById("overview-rejections");
-const overviewAccepted = document.getElementById("overview-accepted");
+let applicationList = null;
+let emptyState = null;
+let applicationCount = null;
+let overviewOpen = null;
+let overviewApplied = null;
+let overviewInterview = null;
+let overviewRejections = null;
+let overviewAccepted = null;
 
 const statusLabels = {
     open: "Offen",
@@ -16,20 +16,43 @@ const statusLabels = {
     accepted: "Zusage"
 };
 
-function renderApplications(){
+function bindApplicationCardElements() {
+    applicationList = document.getElementById("application-list");
+    emptyState = document.querySelector(".empty-state");
+    applicationCount = document.getElementById("application-count");
+    overviewOpen = document.getElementById("overview-open");
+    overviewApplied = document.getElementById("overview-applied");
+    overviewInterview = document.getElementById("overview-interviews");
+    overviewRejections = document.getElementById("overview-rejections");
+    overviewAccepted = document.getElementById("overview-accepted");
+}
+
+function renderApplications() {
+    if(!applicationList){
+        bindApplicationCardElements();
+    }
+
+    if(!applicationList){
+        return;
+    }
+
     const visibleApplications = getVisibleApplications();
-    
+
     checkForEmptyState(visibleApplications);
     applicationList.replaceChildren();
-    applicationCount.textContent = visibleApplications.length;
+
+    if(applicationCount){
+        applicationCount.textContent = visibleApplications.length;
+    }
 
     visibleApplications.forEach((application) => {
         createApplicationCard(application);
     });
+
     updateDashboard();
 }
 
-function getVisibleApplications(){
+function getVisibleApplications() {
     const searchValue = uiState.search.trim().toLowerCase();
 
     const filteredApplications = applications.filter(application => {
@@ -44,7 +67,7 @@ function getVisibleApplications(){
     return sortApplications(filteredApplications, uiState.sort);
 }
 
-function createApplicationCard(application){
+function createApplicationCard(application) {
     const applicationCard = document.createElement("article");
     const logoFrame = document.createElement("div");
     const companyName = document.createElement("h3");
@@ -66,12 +89,11 @@ function createApplicationCard(application){
     const detailsAndOptions = document.createElement("div");
     const details = document.createElement("div");
     const options = document.createElement("div");
-    
+
     companyName.textContent = application.company;
     position.textContent = application.position;
     location.textContent = formatApplicationLocation(application);
     status.textContent = statusLabels[application.status] || application.status;
-    tag.textContent = application.tag;
     applicationDate.textContent = formatApplicationDate(application.date);
     notes.textContent = application.notes;
     logoFallback.textContent = getCompanyInitials(application.company);
@@ -85,75 +107,60 @@ function createApplicationCard(application){
     location.classList.add("application-location");
     dateRow.classList.add("application-date");
     notes.classList.add("application-notes");
-
     detailsAndOptions.classList.add("application-actions");
     details.classList.add("application-tags");
     options.classList.add("application-buttons");
-    tag.classList.add("status-badge");
-    tag.classList.add("tag");
-
+    tag.classList.add("status-badge", "tag");
     status.classList.add("status-badge", `status-${application.status}`);
+
     deleteButton.type = "button";
     deleteButton.setAttribute("aria-label", `Bewerbung von ${application.company} löschen`);
+    deleteButton.classList.add("icon-button");
     deleteButtonIcon.src = "assets/icons/icon_delete.svg";
     deleteButtonIcon.alt = "";
-    deleteButton.classList.add("icon-button");
 
     editButton.type = "button";
-    editButton.setAttribute("aria-label", `Bewerbung von ${application.company} löschen`);
+    editButton.setAttribute("aria-label", `Bewerbung von ${application.company} bearbeiten`);
+    editButton.classList.add("icon-button");
     editButtonIcon.src = "assets/icons/icon_edit.svg";
     editButtonIcon.alt = "";
-    editButton.classList.add("icon-button");
 
     if(application.logo){
         logo.src = application.logo;
         logo.alt = `${application.company} Logo`;
-        logoFrame.appendChild(logo);
+        logoFrame.append(logo);
     }
     else{
-        logoFrame.appendChild(logoFallback);
+        logoFrame.append(logoFallback);
     }
 
-    if (application.tag && application.tag !== "-") {
+    if(application.tag && application.tag !== "-"){
         tag.textContent = application.tag;
-        details.style.justifyContent = "center";
-        details.style.flexDirection = "column-reverse"
-        details.appendChild(tag);
-    }
-    else{
-        details.style.justifyContent = "flex-start";
+        details.classList.add("has-tag");
+        details.append(tag);
     }
 
-    deleteButton.addEventListener("click", () => {deleteApplication(application.id)});
+    deleteButton.addEventListener("click", () => deleteApplication(application.id));
     editButton.addEventListener("click", () => openApplicationModal(application));
 
-    deleteButton.appendChild(deleteButtonIcon);
-    editButton.appendChild(editButtonIcon);
-    dateRow.appendChild(calendarIcon);
-    dateRow.appendChild(applicationDate);
-
-    information.appendChild(companyName);
-    information.appendChild(position);
+    deleteButton.append(deleteButtonIcon);
+    editButton.append(editButtonIcon);
+    dateRow.append(calendarIcon, applicationDate);
+    information.append(companyName, position);
 
     if(location.textContent){
-        information.appendChild(location);
+        information.append(location);
     }
 
-    information.appendChild(dateRow);
-    information.appendChild(notes);
-
-    details.appendChild(status);
+    information.append(dateRow, notes);
+    details.append(status);
     options.append(deleteButton, editButton);
     detailsAndOptions.append(details, options);
-
-    applicationCard.append(logoFrame);
-    applicationCard.appendChild(information);
-    applicationCard.appendChild(detailsAndOptions);
-
-    applicationList.appendChild(applicationCard);
+    applicationCard.append(logoFrame, information, detailsAndOptions);
+    applicationList.append(applicationCard);
 }
 
-function formatApplicationDate(date){
+function formatApplicationDate(date) {
     if(!date){
         return "Kein Datum";
     }
@@ -171,13 +178,13 @@ function formatApplicationDate(date){
     });
 }
 
-function formatApplicationLocation(application){
+function formatApplicationLocation(application) {
     return [application.city, application.state]
         .filter(Boolean)
         .join(" - ");
 }
 
-function getCompanyInitials(company){
+function getCompanyInitials(company) {
     const initials = company
         .split(" ")
         .filter(Boolean)
@@ -189,24 +196,28 @@ function getCompanyInitials(company){
     return initials || "?";
 }
 
-function checkForEmptyState(visibleApplications){
-    if(visibleApplications.length === 0){
-        emptyState.style.display = "flex";
+function checkForEmptyState(visibleApplications) {
+    if(!emptyState){
+        return;
     }
-    else{
-        emptyState.style.display = "none";
+
+    emptyState.style.display = visibleApplications.length === 0 ? "flex" : "none";
+}
+
+function updateDashboard() {
+    setOverviewCount(overviewOpen, "open");
+    setOverviewCount(overviewApplied, "applied");
+    setOverviewCount(overviewInterview, "interview");
+    setOverviewCount(overviewRejections, "rejected");
+    setOverviewCount(overviewAccepted, "accepted");
+}
+
+function setOverviewCount(element, status) {
+    if(element){
+        element.textContent = countApplicationsByStatus(status);
     }
 }
 
-function updateDashboard(){
-    overviewOpen.textContent = countApplicationsByStatus("open");
-    overviewApplied.textContent = countApplicationsByStatus("applied");
-    overviewInterview.textContent = countApplicationsByStatus("interview");
-    overviewRejections.textContent = countApplicationsByStatus("rejected");
-    overviewAccepted.textContent = countApplicationsByStatus("accepted");
-}
-
-function countApplicationsByStatus(status){
+function countApplicationsByStatus(status) {
     return applications.filter(application => application.status === status).length;
 }
-
