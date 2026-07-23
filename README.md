@@ -1,10 +1,10 @@
 # ApplyHQ  
-<img width="1206" height="972" alt="grafik" src="https://github.com/user-attachments/assets/7a9ca264-abb1-4845-badb-5cd4cee5f195" />
+<img width="1892" height="931" alt="grafik" src="https://github.com/user-attachments/assets/25500df4-a650-46fb-a34f-46284b419015" />
+
  
 ## Projektübersicht
 
-ApplyHQ ist eine moderne Web-App zur Verwaltung von Bewerbungen. 
-In Version 0.1 können Bewerbungen erstellt, verwaltet und gelöscht werden. Ein Dashboard liefert einen schnellen Überblick über offene Bewerbungen sowie den aktuellen Stand des Bewerbungsprozesses. Durch die Unterstützung als Progressive Web App (PWA) kann ApplyHQ auf Desktop- und Mobilgeräten installiert und wie eine native Anwendung verwendet werden.
+ApplyHQ ist eine moderne Web-App zur Verwaltung von Bewerbungen. Die Anwendung unterstützt beim Organisieren des gesamten Bewerbungsprozesses – von der Erfassung neuer Bewerbungen über die Verwaltung des aktuellen Status bis hin zum schnellen Wiederfinden vorhandener Einträge. Dank Such-, Filter- und Sortierfunktionen sowie Import- und Exportmöglichkeiten bietet ApplyHQ bereits in einer frühen Entwicklungsphase einen komfortablen Workflow. Als Progressive Web App (PWA) kann die Anwendung auf Desktop- und Mobilgeräten installiert und wie eine native App genutzt werden.
 
 ---
 
@@ -16,18 +16,22 @@ Der Ausgangspunkt war ein ganz konkretes Problem: Während meiner Jobsuche musst
 
 Anstatt einzelne Tutorials nachzubauen, verfolge ich einen projektbasierten Lernansatz. Ziel ist es, reale Anwendungen zu entwickeln, die sich über viele Versionen hinweg kontinuierlich weiterentwickeln. Jede Version führt neue Technologien und Konzepte ein und erweitert die Anwendung Schritt für Schritt. So entsteht nicht nur ein Portfolio-Projekt, sondern gleichzeitig ein Werkzeug, das ich selbst aktiv im Alltag nutze.
 
-Version 0.1 konzentriert sich bewusst auf die Grundlagen moderner Webentwicklung:
+Version 0.2 erweitert die Grundlagen der ersten Version um Komfortfunktionen und eine modularere Anwendungsstruktur. Im Fokus stehen unter anderem:
 
-* HTML5
-* CSS3
-* JavaScript (ES6)
-* DOM-Manipulation
-* Formulare und Event Handling
-* CRUD-Operationen
-* Dynamisches Rendering
-* Local Storage
-* Responsive Design
-* Progressive Web Apps (PWA)
+- HTML5
+- CSS3
+- JavaScript (ES6)
+- DOM-Manipulation
+- Wiederverwendbare UI-Komponenten
+- Modale Dialoge
+- CRUD-Operationen
+- Dynamisches Rendering
+- Local Storage
+- Suche, Filter und Sortierung
+- JSON-Import und -Export
+- Datenvalidierung
+- Responsive Design
+- Progressive Web Apps (PWA)
 
 ---
 
@@ -40,21 +44,6 @@ Die Anwendung funktioniert sowohl auf Desktop-PCs als auch auf Tablets und Smart
 <img width="481" height="838" alt="grafik" src="https://github.com/user-attachments/assets/436aca31-8620-46ec-94e6-4a4d8b24f41b" />
 
 ---
-
-## Technischer Aufbau
-
-Die Anwendung besitzt eine bewusst einfache und übersichtliche Architektur.
-
-* **HTML** strukturiert die Benutzeroberfläche.
-* **CSS** übernimmt Layout, Responsive Design und Animationen.
-* **JavaScript** bildet die gesamte Anwendungslogik.
-
-Die JavaScript-Dateien sind nach Verantwortlichkeiten aufgeteilt:
-
-* `app.js` – Initialisierung und Steuerung der Anwendung
-* `applications.js` – Datenmodell und Verarbeitung der Bewerbungen
-* `render.js` – Dynamisches Erzeugen und Aktualisieren der Benutzeroberfläche
-* `storage.js` – Speichern und Laden der Daten über den Local Storage
 
 Alle Bewerbungsdaten werden lokal im Browser gespeichert. Dadurch kann die Anwendung vollständig ohne Backend betrieben werden.
 
@@ -70,30 +59,40 @@ Darüber hinaus dient das Projekt als Portfolio-Anwendung, die den schrittweisen
 
 ## Status
 
-**Aktuelle Version:** v0.1
+**Aktuelle Version:** v0.2
 
 ### Bereits umgesetzt
 
-* Bewerbungen erstellen
-* Bewerbungen löschen
-* Dashboard mit Statistiken
-* Dynamisches Rendering
-* Local Storage
-* Responsive Design
-* Progressive Web App (PWA)
-* Installation auf Desktop und Smartphone
+- Dashboard mit JavaScript-Komponenten
+- Bewerbungen erstellen
+- Bewerbungen bearbeiten
+- Bewerbungen löschen
+- Suchfunktion
+- Filterfunktion
+- Sortierfunktion
+- Wiederverwendbares Modal-System
+- Wiederverwendbare UI-Komponenten
+- Einstellungen
+- JSON-Export
+- JSON-Import
+- Datenvalidierung
+- Local Storage
+- Responsive Design
+- Progressive Web App (PWA)
+- Installation auf Desktop und Smartphone
 
 ### Geplante Erweiterungen
 
 Die Entwicklung von ApplyHQ erfolgt schrittweise in mehreren Versionen.
 
-Geplante Funktionen umfassen unter anderem:
+- Dokumentenverwaltung
+- Mehrere Bewerbungsprofile
+- Lebenslauf- und Anschreibenverwaltung
+- PDF-Export
+- Stellenanzeigen analysieren
+- Mehrsprachigkeit
+- Regionsspezifische Anschreiben
+- KI-gestützte Unterstützung im Bewerbungsprozess
+- Backend und Benutzerkonten
+- Cloud-Synchronisation
 
-* Einstellungen
-* Import und Export von Bewerbungsdaten
-* Suche, Filter und Sortierung
-* Bearbeiten bestehender Bewerbungen
-* Mehrsprachigkeit
-* Individuelle Anschreiben
-* KI-gestützte Unterstützung im Bewerbungsprozess
-* Cloud-Synchronisation und Benutzerkonten
