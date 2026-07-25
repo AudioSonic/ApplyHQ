@@ -8,9 +8,10 @@ const uiState = {
     sort: "newest"
 };
 
+
 document.addEventListener("DOMContentLoaded", () => {
     bindNavigation();
-    loadDashboard();
+    navigateToDashboard();
 });
 
 function bindNavigation() {

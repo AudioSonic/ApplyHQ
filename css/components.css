@@ -466,9 +466,7 @@
     transform: translateX(220px);
 }
 
-.sidebar-toggle:checked + .sidebar-menu-button span {
-    background-color: var(--color-text-light);
-}
+
 
 .sidebar-toggle:checked + .sidebar-menu-button span:nth-child(1) {
     transform: translateY(7px) rotate(45deg);

@@ -1,6 +1,7 @@
 function importJSON() {
     const input = document.createElement("input");
     const reader = new FileReader();
+    const dashboardButton = document.querySelector('[data-action="loadDashboard"]');
 
     input.type = "file";
     input.accept = ".json";
@@ -20,7 +21,7 @@ function importJSON() {
 
                 applications = data;
                 saveApplications();
-                loadDashboard();
+                navigateToDashboard();
 
             } catch (error) {
                 alert(error.message);
