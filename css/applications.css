@@ -89,10 +89,10 @@
     border-radius: 14px;
     color: var(--color-primary);
     display: flex;
-    font-size: 30px;
+    font-size: 21px;
     font-weight: 800;
-    height: 30px;
-    width: 30px;
+    height: 50px;
+    width: 50px;
     justify-content: center;
     overflow: hidden;
 }
@@ -362,12 +362,6 @@
 
     .application-info-section {
         grid-template-columns: 50px minmax(0, 1fr) 48px;
-    }
-
-    .application-logo {
-        font-size: 21px;
-        height: 50px;
-        width: 50px;
     }
 
     #company-name {
