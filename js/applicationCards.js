@@ -72,6 +72,7 @@ function createApplicationCard(application) {
     const logoFrame = document.createElement("div");
     const companyName = document.createElement("h3");
     const position = document.createElement("p");
+    const locationSection = document.createElement("div");
     const location = document.createElement("p");
     const status = document.createElement("span");
     const tag = document.createElement("span");
@@ -86,32 +87,44 @@ function createApplicationCard(application) {
     const deleteButtonIcon = document.createElement("img");
     const editButton = document.createElement("button");
     const editButtonIcon = document.createElement("img");
-    const detailsAndOptions = document.createElement("div");
     const details = document.createElement("div");
     const options = document.createElement("div");
+    const infoSection = document.createElement("div");
+    const hr = document.createElement("hr");
+    const locationIcon = document.createElement("img");
 
     companyName.textContent = application.company;
     position.textContent = application.position;
     location.textContent = formatApplicationLocation(application);
     status.textContent = statusLabels[application.status] || application.status;
     applicationDate.textContent = formatApplicationDate(application.date);
-    notes.textContent = application.notes;
+    notes.textContent = (application.notes || "").trim();
     logoFallback.textContent = getCompanyInitials(application.company);
     calendarIcon.src = "assets/icons/icon_calendar.svg";
     calendarIcon.alt = "";
+    locationIcon.src = "assets/icons/icon_location.svg";
+    locationIcon.alt = "";
 
     applicationCard.classList.add("application-card");
     logoFrame.classList.add("application-logo");
     information.classList.add("application-info");
     position.classList.add("application-position");
-    location.classList.add("application-location");
     dateRow.classList.add("application-date");
     notes.classList.add("application-notes");
-    detailsAndOptions.classList.add("application-actions");
     details.classList.add("application-tags");
-    options.classList.add("application-buttons");
+    options.classList.add("application-options");
     tag.classList.add("status-badge", "tag");
+    infoSection.classList.add("application-info-section");
+    locationSection.classList.add("company-location-section");
+    hr.classList.add("application-card-hr");
     status.classList.add("status-badge", `status-${application.status}`);
+
+    companyName.id = "company-name";
+    position.id = "company-position";
+    location.id = "company-location";
+    dateRow.id = "application-date";
+    notes.id = "application-notes";
+
 
     deleteButton.type = "button";
     deleteButton.setAttribute("aria-label", `Bewerbung von ${application.company} löschen`);
@@ -149,17 +162,27 @@ function createApplicationCard(application) {
     deleteButton.append(deleteButtonIcon);
     editButton.append(editButtonIcon);
     dateRow.append(calendarIcon, applicationDate);
+
+    if(location.textContent){
+        locationSection.append(locationIcon, location);
+    }
+
     information.append(companyName, position);
 
     if(location.textContent){
-        information.append(location);
+        information.append(locationSection);
     }
 
-    information.append(dateRow, notes);
-    details.append(status);
+    information.append(dateRow);
+
+    if(notes.textContent){
+        information.append(notes);
+    }
     options.append(deleteButton, editButton);
-    detailsAndOptions.append(details, options);
-    applicationCard.append(logoFrame, information, detailsAndOptions);
+    details.append(status);
+    infoSection.append(logoFrame, information, options);
+
+    applicationCard.append(infoSection, hr, details);
     applicationList.append(applicationCard);
 }
 

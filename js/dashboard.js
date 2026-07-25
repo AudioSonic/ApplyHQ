@@ -88,7 +88,7 @@ function createOverviewCard({ counterId, iconPath, label }) {
 function createApplicationPanel() {
     const section = createDashboardElement("section");
     const panel = createDashboardElement("section", "panel");
-    const panelHeader = createDashboardElement("div", "panel-header");
+    const panelHeader = createDashboardElement("div", "applications-panel-header");
 
     section.id = "applications";
     panel.id = "application-overview";
