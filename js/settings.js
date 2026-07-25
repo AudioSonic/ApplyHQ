@@ -28,8 +28,8 @@ function renderSettings(){
     exportText.textContent = "Daten exportieren";
     subTitle.textContent = "Dokumentenverwaltung";
     description.textContent = "Importiere oder exportiere deine Bewerbungsdaten.";
-    importIcon.src = "../assets/icons/icon_download.svg";
-    exportIcon.src = "../assets/icons/icon_upload.svg";
+    importIcon.src = "assets/icons/icon_download.svg";
+    exportIcon.src = "assets/icons/icon_upload.svg";
 
     buttonSection.classList.add("vertical-orientation");
     buttonSection.classList.add("button-section");
