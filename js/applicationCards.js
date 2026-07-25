@@ -16,6 +16,11 @@ const statusLabels = {
     accepted: "Zusage"
 };
 
+const tagLabels = {
+    junior: "Junior",
+    initiative: "Initiativ"
+};
+
 function bindApplicationCardElements() {
     applicationList = document.getElementById("application-list");
     emptyState = document.querySelector(".empty-state");
@@ -25,7 +30,7 @@ function bindApplicationCardElements() {
     overviewInterview = document.getElementById("overview-interviews");
     overviewRejections = document.getElementById("overview-rejections");
     overviewAccepted = document.getElementById("overview-accepted");
-}
+};
 
 function renderApplications() {
     if(!applicationList){
@@ -50,7 +55,7 @@ function renderApplications() {
     });
 
     updateDashboard();
-}
+};
 
 function getVisibleApplications() {
     const searchValue = uiState.search.trim().toLowerCase();
@@ -65,7 +70,7 @@ function getVisibleApplications() {
     });
 
     return sortApplications(filteredApplications, uiState.sort);
-}
+};
 
 function createApplicationCard(application) {
     const applicationCard = document.createElement("article");
@@ -97,6 +102,7 @@ function createApplicationCard(application) {
     position.textContent = application.position;
     location.textContent = formatApplicationLocation(application);
     status.textContent = statusLabels[application.status] || application.status;
+    tag.textContent = tagLabels[application.tag] || application.tag;
     applicationDate.textContent = formatApplicationDate(application.date);
     notes.textContent = (application.notes || "").trim();
     logoFallback.textContent = getCompanyInitials(application.company);
@@ -148,7 +154,6 @@ function createApplicationCard(application) {
     }
 
     if(application.tag && application.tag !== "-"){
-        tag.textContent = application.tag;
         details.classList.add("has-tag");
         details.append(tag);
     }
