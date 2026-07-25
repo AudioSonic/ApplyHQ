@@ -222,3 +222,10 @@ function createDashboardIcon(pathData) {
 
     return svg;
 }
+
+function navigateToDashboard() {
+    const dashboardButton = document.querySelector('[data-action="loadDashboard"]');
+
+    setActiveNavigationButton(dashboardButton);
+    loadDashboard();
+}

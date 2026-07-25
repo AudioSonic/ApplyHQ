@@ -185,6 +185,7 @@
     justify-content: flex-end;
     margin-top: 0;
     width: auto;
+    margin-right: 5px;
 }
 
 .application-options .icon-button {
@@ -377,6 +378,7 @@
         grid-column: auto;
         justify-self: end;
         width: 48px;
+        margin-right: 0;
     }
 
     .application-options .icon-button {
