@@ -17,7 +17,7 @@ function renderSettings(){
     const subTitle = document.createElement("h2");
     const buttonSection = document.createElement("div");
     const importButton = document.createElement("button");
-    const exportBututton = document.createElement("button");
+    const exportButton = document.createElement("button");
     const importIcon = document.createElement("img");
     const exportIcon = document.createElement("img");
     const importText = document.createElement("span");
@@ -35,17 +35,17 @@ function renderSettings(){
     buttonSection.classList.add("button-section");
     importButton.classList.add("button");
     importButton.classList.add("settings-button");
-    exportBututton.classList.add("button");
-    exportBututton.classList.add("settings-button");
+    exportButton.classList.add("button");
+    exportButton.classList.add("settings-button");
     hr.style.margin = "5px";
 
     importButton.addEventListener("click", importJSON);
-    exportBututton.addEventListener("click", exportJSON);
+    exportButton.addEventListener("click", exportJSON);
 
     importButton.append(importText, importIcon);
-    exportBututton.append(exportText, exportIcon);
+    exportButton.append(exportText, exportIcon);
 
-    buttonSection.append(importButton, exportBututton);
+    buttonSection.append(importButton, exportButton);
     settingSection.append(headerText, hr, subTitle, description, buttonSection);
 
     return settingSection;

@@ -7,7 +7,7 @@ body {
     color: var(--color-text);
     font-family: "Inter", sans-serif;
     font-optical-sizing: auto;
-    font-weight: <weight>;
+    font-weight: 400;
     font-style: normal;
     font-size: 16px;
     line-height: 1.5;
@@ -16,11 +16,6 @@ body {
 
 html {
     scroll-behavior: smooth;
-}
-
-header{
-    margin-bottom: 15px;
-
 }
 
 h1,
@@ -48,18 +43,3 @@ p {
     color: var(--color-text);
 }
 
-aside{
-    position: sticky;
-    top: 0;
-    display: flex;
-    flex-direction: column;
-    height:100vh;
-    width: 25vh;
-    background-color: var(--color-sidebar-background);
-}
-
-aside div{
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-}

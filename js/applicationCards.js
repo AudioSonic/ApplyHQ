@@ -115,6 +115,8 @@ function createApplicationCard(application) {
     logoFrame.classList.add("application-logo");
     information.classList.add("application-info");
     position.classList.add("application-position");
+    companyName.classList.add("application-company-name");
+    location.classList.add("application-location");
     dateRow.classList.add("application-date");
     notes.classList.add("application-notes");
     details.classList.add("application-tags");
@@ -124,13 +126,6 @@ function createApplicationCard(application) {
     locationSection.classList.add("company-location-section");
     hr.classList.add("application-card-hr");
     status.classList.add("status-badge", `status-${application.status}`);
-
-    companyName.id = "company-name";
-    position.id = "company-position";
-    location.id = "company-location";
-    dateRow.id = "application-date";
-    notes.id = "application-notes";
-
 
     deleteButton.type = "button";
     deleteButton.setAttribute("aria-label", `Bewerbung von ${application.company} löschen`);
@@ -157,10 +152,6 @@ function createApplicationCard(application) {
         details.classList.add("has-tag");
         details.append(tag);
     }
-    else{
-        details.classList.add("no-tag");
-    }
-
     deleteButton.addEventListener("click", () => deleteApplication(application.id));
     editButton.addEventListener("click", () => openApplicationModal(application));
 
