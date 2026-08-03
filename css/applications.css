@@ -1,25 +1,25 @@
-#applications {
+.dashboard-panel-section {
     margin-top: 30px;
     min-width: 0;
 }
 
-#application-overview {
+.dashboard-panel-overview {
     display: flex;
     flex-direction: column;
     min-width: 0;
     width: 100%;
 }
 
-#application-overview.panel {
+.dashboard-panel-overview.panel {
     height: 100vh;
     min-width: 0;
 }
 
-#application-overview-settings {
+.dashboard-panel-overview-settings {
     width: 100%;
 }
 
-.applications-panel-header {
+.dashboard-panel-header {
     align-items: flex-start;
     border-bottom: 1px solid var(--color-border);
     display: flex;
@@ -30,7 +30,7 @@
     padding: 20px 24px;
 }
 
-.applications-panel-header p {
+.dashboard-panel-header p {
     font-size: 14px;
     margin-top: 6px;
 }
@@ -387,7 +387,7 @@
 }
 
 @media (min-width: 768px) {
-    #applications {
+    .dashboard-panel-section {
         align-items: start;
         display: grid;
         gap: 24px;
@@ -400,7 +400,4 @@
 }
 
 @media (min-width: 1024px) {
-    #applications {
-        grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
-    }
 }

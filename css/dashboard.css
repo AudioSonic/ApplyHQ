@@ -1,0 +1,18 @@
+.dashboard-main-section{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+@media (min-width: 391px) {
+
+}
+
+@media (min-width: 768px) {
+    .dashboard-main-section{
+    flex-direction: row;
+}
+}
+
+@media (min-width: 1024px) {
+}

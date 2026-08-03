@@ -28,12 +28,18 @@ const dashboardStats = [
 
 function loadDashboard() {
     const main = document.querySelector("main");
+    const mainSection = document.createElement("div");
 
     if(!main){
         return;
     }
 
-    main.replaceChildren(createOverviewSection(), createApplicationPanel());
+    mainSection.classList.add("dashboard-main-section");
+
+    mainSection.append(createDashboardPanel(applicationPanel));
+    mainSection.append(createDashboardPanel(searchProfilePanel));
+
+    main.replaceChildren(createOverviewSection(), mainSection);
 
     initializeDashboard();
 }
@@ -85,40 +91,41 @@ function createOverviewCard({ counterId, iconPath, label }) {
     return card;
 }
 
-function createApplicationPanel() {
+function createDashboardPanel(config) {
     const section = createDashboardElement("section");
     const panel = createDashboardElement("section", "panel");
-    const panelHeader = createDashboardElement("div", "applications-panel-header");
+    const panelHeader = createDashboardElement("div", "dashboard-panel-header");
 
-    section.id = "applications";
-    panel.id = "application-overview";
+    section.classList.add("dashboard-panel-section");
+    panel.classList.add("dashboard-panel-overview");
 
-    panelHeader.append(createSearchControls());
-    panel.append(
-        panelHeader,
-        createApplicationListContainer(),
-        createApplicationFooter()
-    );
+        panelHeader.append(createSearchControls(config.title));
+        panel.append(
+            panelHeader,
+            createListContainer(config.containerId, config.title, config.listId),
+            createDashboardPanelFooter(config.title)
+        );
+
     section.append(panel);
 
     return section;
 }
 
-function createSearchControls() {
+function createSearchControls(title, placeholder, counterId, searchbarId, searchPlaceholder) {
     const container = createDashboardElement("div");
     const heading = createDashboardElement("h2");
     const count = createDashboardElement("span");
     const searchBar = createDashboardElement("input");
     const sortAndFilter = createDashboardElement("div");
 
-    container.id = "application-overview-settings";
-    count.id = "application-count";
+    container.classList.add("dashboard-panel-overview-settings");
+    count.id = counterId;
     count.textContent = "0";
-    heading.append("Deine Bewerbungen (", count, ")");
+    heading.append("Deine " + title + " (", count, ")");
 
     searchBar.type = "search";
-    searchBar.id = "application-searchbar";
-    searchBar.placeholder = "Suche nach Unternehmen oder Stelle...";
+    searchBar.id = searchbarId;
+    searchBar.placeholder = searchPlaceholder;
 
     sortAndFilter.id = "sort-and-filter";
     sortAndFilter.append(
@@ -160,15 +167,15 @@ function createSelectControl(id, labelText, options) {
     return label;
 }
 
-function createApplicationListContainer() {
+function createListContainer(containerId, text, listId) {
     const container = createDashboardElement("div");
     const emptyState = createDashboardElement("div", "empty-state");
     const emptyText = createDashboardElement("p");
     const applicationList = createDashboardElement("div");
 
-    container.id = "application-list-container";
-    emptyText.textContent = "Noch keine passenden Bewerbungen vorhanden.";
-    applicationList.id = "application-list";
+    container.id = containerId /*"application-list-container"*/;
+    emptyText.textContent = "Noch keine passenden " + text + " vorhanden.";
+    applicationList.id = listId/*"application-list"*/;
 
     emptyState.append(emptyText);
     container.append(emptyState, applicationList);
@@ -176,13 +183,13 @@ function createApplicationListContainer() {
     return container;
 }
 
-function createApplicationFooter() {
+function createDashboardPanelFooter(title) {
     const footer = createDashboardElement("footer", "panel-footer");
     const addButton = createDashboardElement("button", "add-application-button");
 
     addButton.id = "open-application-modal-button";
     addButton.type = "button";
-    addButton.textContent = "Bewerbung manuell hinzufügen";
+    addButton.textContent = title + " manuell hinzufügen";
     footer.append(addButton);
 
     return footer;
