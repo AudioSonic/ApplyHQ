@@ -264,28 +264,6 @@
     background-color: #f5c84b;
 }
 
-#application-searchbar {
-    border-radius: var(--border-radius);
-    height: 35px;
-    margin-bottom: 15px;
-    margin-top: 15px;
-    min-width: 0;
-    padding: 9px;
-    width: 100%;
-    font-size: 15px;
-}
-
-.add-application-button img {
-    height: 22px;
-    width: 22px;
-}
-
-.add-application-button p {
-    color: var(--color-text-light);
-    font-size: 13px;
-    font-weight: 700;
-}
-
 #new-application {
     display: flex;
     flex-direction: column;

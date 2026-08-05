@@ -6,7 +6,8 @@ const applicationPanel = {
     addButtonId: "open-application-modal-button",
     searchPlaceholder: "Suche nach Unternehmen oder Stelle...",
     counterId: "application-count",
-    searchBarId: "application-searchbar"
+    searchBarId: "application-searchbar",
+    buttonId: "open-application-modal-button"
 };
 
 const searchProfilePanel = {
@@ -17,5 +18,6 @@ const searchProfilePanel = {
     addButtonId: "open-searchProfile-modal-button",
     searchPlaceholder: "Suche nach Suchprofil...",
     counterId: "searchProfile-count",
-    searchBarId: "searchProfile-searchbar"
+    searchBarId: "searchProfile-searchbar",
+    buttonId: "open-seachProfile-modal-button"
 };
