@@ -1,0 +1,98 @@
+.searchbar {
+    border-radius: var(--border-radius);
+    height: 35px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    min-width: 0;
+    padding: 9px;
+    width: 100%;
+    font-size: 15px;
+}
+
+.search-profile-card {
+    gap: 14px;
+    padding: 16px;
+}
+
+.search-profile-title-and-status {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.search-profile-title-and-status h2 {
+    font-size: 17px;
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+.search-profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.search-profile-details > span:not(.search-profile-title-and-status),
+.search-profile-results {
+    color: var(--color-text-secondary);
+    font-size: 15px;
+}
+
+.search-profile-buttons {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.search-profile-results {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 2px;
+}
+
+.search-profile-card hr {
+    border: 0;
+    border-top: 1px solid var(--color-border);
+    margin: 0;
+    width: 100%;
+}
+
+.search-profile-button {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+}
+
+.search-profile-button img {
+    height: 17px;
+    width: 17px;
+}
+
+.search-profile-buttons .search-profile-button:last-child {
+    flex: 0 0 34px;
+    color: var(--color-text-secondary);
+    font-size: 24px;
+    line-height: 1;
+}
+
+.search-profile-title-and-status span {
+    background-color: var(--color-surface-soft);
+    border-radius: 999px;
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 12px;
+}
+
+@media (max-width: 420px) {
+    .search-profile-buttons {
+        gap: 6px;
+    }
+
+    .search-profile-buttons .search-profile-button {
+        font-size: 12px;
+    }
+}
+

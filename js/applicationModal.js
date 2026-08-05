@@ -93,7 +93,7 @@ function createApplicationModal(application = null){
     notesTextarea.maxLength = 240;
     notesTextarea.placeholder = "Notizen zur Bewerbung (optional)";
 
-    submitButton.classList.add("add-application-button");
+    submitButton.classList.add("button");
     submitButton.type = "submit";
     submitIcon.src = "assets/icons/icon_plus.svg";
     submitIcon.alt = "";

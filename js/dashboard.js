@@ -49,6 +49,7 @@ function initializeDashboard() {
     bindApplicationCardElements();
     bindSearchControls();
     loadApplications();
+    createSearchProfileCard();
 }
 
 function createOverviewSection() {
@@ -99,11 +100,11 @@ function createDashboardPanel(config) {
     section.classList.add("dashboard-panel-section");
     panel.classList.add("dashboard-panel-overview");
 
-        panelHeader.append(createSearchControls(config.title));
+        panelHeader.append(createSearchControls(config));
         panel.append(
             panelHeader,
-            createListContainer(config.containerId, config.title, config.listId),
-            createDashboardPanelFooter(config.title)
+            createListContainer(config),
+            createDashboardPanelFooter(config)
         );
 
     section.append(panel);
@@ -111,7 +112,7 @@ function createDashboardPanel(config) {
     return section;
 }
 
-function createSearchControls(title, placeholder, counterId, searchbarId, searchPlaceholder) {
+function createSearchControls(config) {
     const container = createDashboardElement("div");
     const heading = createDashboardElement("h2");
     const count = createDashboardElement("span");
@@ -119,13 +120,14 @@ function createSearchControls(title, placeholder, counterId, searchbarId, search
     const sortAndFilter = createDashboardElement("div");
 
     container.classList.add("dashboard-panel-overview-settings");
-    count.id = counterId;
+    count.id = config.counterId;
     count.textContent = "0";
-    heading.append("Deine " + title + " (", count, ")");
+    heading.append("Deine " + config.title + " (", count, ")");
 
     searchBar.type = "search";
-    searchBar.id = searchbarId;
-    searchBar.placeholder = searchPlaceholder;
+    searchBar.id = config.searchBarId;
+    searchBar.placeholder = config.searchPlaceholder;
+    searchBar.classList.add("searchbar");
 
     sortAndFilter.id = "sort-and-filter";
     sortAndFilter.append(
@@ -167,15 +169,15 @@ function createSelectControl(id, labelText, options) {
     return label;
 }
 
-function createListContainer(containerId, text, listId) {
+function createListContainer(config) {
     const container = createDashboardElement("div");
     const emptyState = createDashboardElement("div", "empty-state");
     const emptyText = createDashboardElement("p");
     const applicationList = createDashboardElement("div");
 
-    container.id = containerId /*"application-list-container"*/;
-    emptyText.textContent = "Noch keine passenden " + text + " vorhanden.";
-    applicationList.id = listId/*"application-list"*/;
+    container.id = config.containerId 
+    emptyText.textContent = "Noch keine passenden " + config.title + " vorhanden.";
+    applicationList.id = config.listId
 
     emptyState.append(emptyText);
     container.append(emptyState, applicationList);
@@ -183,13 +185,16 @@ function createListContainer(containerId, text, listId) {
     return container;
 }
 
-function createDashboardPanelFooter(title) {
+function createDashboardPanelFooter(config) {
     const footer = createDashboardElement("footer", "panel-footer");
-    const addButton = createDashboardElement("button", "add-application-button");
+    const addButton = createDashboardElement("button", "button");
 
-    addButton.id = "open-application-modal-button";
+    addButton.classList.add("button-primary");
+    addButton.classList.add("button-start-search");
+
+    addButton.id = config.buttonId;
     addButton.type = "button";
-    addButton.textContent = title + " manuell hinzufügen";
+    addButton.textContent = config.title + " manuell hinzufügen";
     footer.append(addButton);
 
     return footer;

@@ -23,6 +23,7 @@ const tagLabels = {
 
 function bindApplicationCardElements() {
     applicationList = document.getElementById("application-list");
+    searchProfileList = document.getElementById("searchProfile-list");
     emptyState = document.querySelector(".empty-state");
     applicationCount = document.getElementById("application-count");
     overviewOpen = document.getElementById("overview-open");

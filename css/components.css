@@ -163,31 +163,34 @@
     padding: 1rem;
 }
 
-.add-application-button {
-    align-items: center;
-    background-color: var(--color-primary);
+.button {
     border-radius: 8px;
-    color: var(--color-text-light);
+    color: var(--color-text);
     display: flex;
     gap: 10px;
     height: 42px;
     justify-content: center;
+    align-items: center;
     transition: background-color 140ms ease, transform 140ms ease;
-    width: 100%;
 }
 
-.add-application-button:hover {
+.button-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+}
+
+.button:hover {
     background-color: var(--color-primary-hover);
     transform: translateY(-1px);
 }
 
-.add-application-button:active,
+.button:active,
 .theme-toggle:active,
 .icon-button:active {
     transform: translateY(0);
 }
 
-.add-application-button:focus-visible,
+.button:focus-visible,
 .theme-toggle:focus-visible,
 .icon-button:focus-visible,
 .sort-control select:focus-visible,
@@ -198,6 +201,10 @@
 #new-application textarea:focus-visible {
     outline: 3px solid rgba(82, 41, 211, 0.18);
     outline-offset: 2px;
+}
+
+.button-start-search{
+    width: 100%;
 }
 
 .empty-state {
