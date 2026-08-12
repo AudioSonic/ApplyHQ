@@ -1,0 +1,32 @@
+[{
+    "name": "Junior Frontend Entwickler",
+    "searchTerms": ["C#", "WebDev", "Junior", "Einstieg"],
+    "location": "Leipzig",
+    "radius": "50",
+    "remote": true,
+    "active": true,
+    "lastSearch": "2026-08-01",
+    "newJobs": "10",
+    "typeOfEmployment": "full-time"
+},{
+    "name": "Software Developer",
+    "searchTerms": ["JavaScript", "TypeScript"],
+    "location": "Dresden",
+    "radius": "12.5",
+    "remote": false,
+    "active": true,
+    "lastSearch": "2026-08-09",
+    "newJobs": "3",
+    "typeOfEmployment": "full-time"
+},{
+    "name": "Vibe Coder",
+    "searchTerms": ["ChatGPT", "Claude", "Codex"],
+    "location": "Deutschland",
+    "radius": "50",
+    "remote": true,
+    "active": true,
+    "lastSearch": "2026-08-01",
+    "newJobs": "10",
+    "typeOfEmployment": "full-time"
+}
+]
