@@ -1,67 +1,44 @@
-function createSearchProfileCard(){
-    const searchProfileList = document.getElementById("searchProfile-list");
-    const searchProfileCard = document.createElement("article");
-    const title = document.createElement("h2");
-    const searchLocation = document.createElement("span");
-    const searchDistance = document.createElement("span");
-    const newPositionsLabel = document.createElement("span");
-    const newPositionCount = document.createElement("span");
-    const hr = document.createElement("hr");
-
-    const btBeginSearch = document.createElement("button");
-    const beginSearchIcon = document.createElement("img");
-    const beginSearchText = document.createElement("span");
-
-    const btEditSearch = document.createElement("button");
-    const editSearchIcon = document.createElement("img");
-    const editSearchText = document.createElement("span");
-
-    const btOptions = document.createElement("button");
-    const searchStatus = document.createElement("span");
-
-    const searchDetails = document.createElement("div");
-    const searchButtons = document.createElement("div");
-    const searchResults = document.createElement("div");
-    const titleAndStatus = document.createElement("div");
-
-    searchProfileCard.classList.add("application-card");
-    searchProfileCard.classList.add("search-profile-card");
-    searchDetails.classList.add("search-profile-details");
-    searchButtons.classList.add("search-profile-buttons");
-    searchResults.classList.add("search-profile-results");
-    titleAndStatus.classList.add("search-profile-title-and-status");
-
-    btBeginSearch.classList.add("button");
-    btBeginSearch.classList.add("button-primary");
-    btBeginSearch.classList.add("search-profile-button");
-    btEditSearch.classList.add("button");
-    btEditSearch.classList.add("search-profile-button");
-    btOptions.classList.add("search-profile-button");
-
-    title.textContent = "Frontend Entwickler";
-    searchLocation.textContent = "Leipzig";
-    searchDistance.textContent = "25 km";
-    newPositionsLabel.textContent = "Neue Stellen";
-    newPositionCount.textContent = "8";
-    beginSearchText.textContent = "Suche Starten";
-    editSearchText.textContent = "Bearbeiten";
-    btOptions.textContent = "⋮";
-    btOptions.setAttribute("aria-label", "Suchprofil-Optionen");
-    searchStatus.textContent = "Inaktiv";
-
-    beginSearchIcon.src = "assets/icons/icon_arrow_right.png";
-    editSearchIcon.src = "assets/icons/icon_edit.svg";
-
-    btBeginSearch.append(beginSearchIcon, beginSearchText);
-    btEditSearch.append(editSearchIcon, editSearchText);
-
-    titleAndStatus.append(title, searchStatus);
-    searchDetails.append(titleAndStatus, searchLocation, searchDistance);
-    searchResults.append(newPositionsLabel, newPositionCount);
-    searchButtons.append(btBeginSearch, btEditSearch, btOptions);
-    searchProfileCard.append(searchDetails, searchResults, hr, searchButtons);
-
-    searchProfileList.append(searchProfileCard);
-
-    return searchProfileCard;
+let searchProfiles = [];
+let searchProfileId = 0;
+const defaultSearchProfiles = [
+    { id: 0, name: "Frontend Developer", position: "Frontend Developer", location: "Leipzig", radius: 25, remote: true, employmentType: "full-time", active: true, searchTerms: ["html", "javascript"], newJobs: 8 },
+    { id: 1, name: "Full-Stack Developer", position: "Full-Stack Developer", location: "Dresden", radius: 50, remote: false, employmentType: "full-time", active: true, searchTerms: ["javascript", "c#"], newJobs: 3 },
+    { id: 2, name: "Software Developer", position: "Software Developer", location: "Deutschland", radius: 100, remote: true, employmentType: "part-time", active: false, searchTerms: [], newJobs: 0 }
+];
+function saveSearchProfiles() { localStorage.setItem("searchProfiles", JSON.stringify(searchProfiles)); }
+function loadSearchProfiles() { try { const data = JSON.parse(localStorage.getItem("searchProfiles")); searchProfiles = Array.isArray(data) ? data : structuredClone(defaultSearchProfiles); } catch { searchProfiles = structuredClone(defaultSearchProfiles); } searchProfileId = searchProfiles.reduce((max, p) => Math.max(max, Number(p.id) || 0), -1) + 1; saveSearchProfiles(); renderSearchProfiles(); }
+function renderSearchProfiles() { const list = document.getElementById("searchProfile-list"); const count = document.getElementById("searchProfile-count"); if (!list) return; list.replaceChildren(...searchProfiles.map(createSearchProfileCard)); const emptyState = document.querySelector('[data-empty-state-for="searchProfile-list"]'); if (emptyState) emptyState.hidden = searchProfiles.length > 0; if (count) count.textContent = searchProfiles.length; }
+function createSearchProfileCard(profile) {
+    const card = document.createElement("article"); card.className = "application-card search-profile-card";
+    const details = document.createElement("div"); details.className = "search-profile-details";
+    const row = document.createElement("div"); row.className = "search-profile-title-and-status";
+    const title = document.createElement("h2"); title.textContent = profile.name; const status = document.createElement("span"); status.textContent = profile.active ? "Aktiv" : "Inaktiv"; status.classList.toggle("is-active", profile.active); row.append(title, status);
+    const position = document.createElement("span"); position.textContent = profile.position; const location = document.createElement("span"); location.textContent = `${profile.location} · ${profile.radius} km${profile.remote ? " · Remote möglich" : ""}`; details.append(row, position, location);
+    const results = document.createElement("div"); results.className = "search-profile-results"; results.append(Object.assign(document.createElement("span"), { textContent: "Neue Stellen" }), Object.assign(document.createElement("span"), { textContent: profile.newJobs || 0 }));
+    const buttons = document.createElement("div"); buttons.className = "search-profile-buttons";
+    const start = document.createElement("button"); start.className = "button button-primary search-profile-button"; start.type = "button"; start.textContent = "Suche starten";
+    const startIcon = document.createElement("img"); startIcon.src = "assets/icons/icon_arrow_right.png"; startIcon.alt = ""; start.prepend(startIcon);
+    const edit = document.createElement("button"); edit.className = "button search-profile-button"; edit.type = "button"; edit.textContent = "Bearbeiten"; edit.onclick = () => openSearchProfileModal(profile);
+    const remove = document.createElement("button"); remove.className = "search-profile-button icon-button"; remove.type = "button"; remove.setAttribute("aria-label", "Suchprofil löschen"); const removeIcon = document.createElement("img"); removeIcon.src = "assets/icons/icon_delete.svg"; removeIcon.alt = ""; remove.append(removeIcon); remove.onclick = () => deleteSearchProfile(profile.id); buttons.append(start, edit, remove);
+    card.append(details, results, document.createElement("hr"), buttons); return card;
+}
+function addSearchProfile(data) { searchProfiles.push({ id: searchProfileId++, ...data, newJobs: 0 }); saveSearchProfiles(); renderSearchProfiles(); }
+function updateSearchProfile(id, data) { const profile = searchProfiles.find(p => p.id === id); if (profile) { Object.assign(profile, data); saveSearchProfiles(); renderSearchProfiles(); } }
+function deleteSearchProfile(id) { searchProfiles = searchProfiles.filter(p => p.id !== id); saveSearchProfiles(); renderSearchProfiles(); }
+function openSearchProfileModal(profile = null) { const modal = createModal(); modal.title.textContent = profile ? "Suchprofil bearbeiten" : "Neues Suchprofil"; modal.content.append(createSearchProfileModal(profile)); }
+function createSearchProfileModal(profile = null) {
+    const form = document.createElement("form"); form.className = "application-modal-form search-profile-modal-form";
+    [["name", "Profilname *", "z. B. Frontend Jobs"], ["position", "Stellenbezeichnung *", "z. B. Frontend Developer"], ["location", "Standort *", "z. B. Berlin"], ["radius", "Suchradius (km) *", "25"]].forEach(([id, label, placeholder]) => { const input = createInput(`search-profile-${id}`, id === "radius" ? "number" : "text", placeholder); input.name = id; input.required = true; input.min = id === "radius" ? 0 : 2; form.append(createLabel(input.id, label), input); });
+    const termsLabel = createLabel("search-profile-terms-input", "Suchbegriffe"); const termsWrapper = document.createElement("div"); termsWrapper.className = "search-profile-tags-input"; const termsInput = createInput("search-profile-terms-input", "text", "z. B. html, c#, javascript"); termsWrapper.append(termsInput); form.append(termsLabel, termsWrapper);
+    let searchTerms = profile && Array.isArray(profile.searchTerms) ? [...profile.searchTerms] : [];
+    function renderTerms() { termsWrapper.querySelectorAll(".search-profile-tag").forEach(tag => tag.remove()); searchTerms.forEach(term => { const tag = document.createElement("span"); tag.className = "search-profile-tag"; tag.textContent = term; const remove = document.createElement("button"); remove.type = "button"; remove.textContent = "×"; remove.onclick = () => { searchTerms = searchTerms.filter(item => item !== term); renderTerms(); }; tag.append(remove); termsWrapper.insertBefore(tag, termsInput); }); termsInput.placeholder = searchTerms.length ? "" : "z. B. html, c#, javascript"; }
+    function addTerms(value) { value.split(",").map(term => term.trim().toLowerCase()).filter(term => term && !searchTerms.includes(term)).forEach(term => searchTerms.push(term)); termsInput.value = ""; renderTerms(); }
+    termsInput.addEventListener("keydown", event => { if (event.key === "Enter" || event.key === ",") { event.preventDefault(); addTerms(termsInput.value); } }); termsInput.addEventListener("blur", () => addTerms(termsInput.value)); renderTerms();
+    const employment = document.createElement("select"); employment.name = "employmentType"; employment.id = "search-profile-employmentType"; [["full-time", "Vollzeit"], ["part-time", "Teilzeit"], ["contract", "Vertrag"]].forEach(([v, t]) => employment.append(createOption(v, t))); form.append(createLabel(employment.id, "Beschäftigungsart"), employment);
+    const remote = document.createElement("input"); remote.type = "checkbox"; remote.name = "remote"; remote.id = "search-profile-remote";
+    const remoteRow = document.createElement("label"); remoteRow.className = "search-profile-checkbox-row"; remoteRow.htmlFor = remote.id; remoteRow.append(remote, document.createTextNode("Remote möglich"));
+    form.append(remoteRow);
+    const submit = document.createElement("button"); submit.className = "button button-primary"; submit.type = "submit"; submit.textContent = profile ? "Änderungen speichern" : "Suchprofil hinzufügen"; form.append(submit);
+    if (profile) Object.entries(profile).forEach(([key, value]) => { const field = form.elements[key]; if (field) field.type === "checkbox" ? field.checked = Boolean(value) : field.value = value; });
+    form.onsubmit = event => { event.preventDefault(); addTerms(termsInput.value); if (!form.reportValidity()) return; const data = Object.fromEntries(new FormData(form)); data.radius = Number(data.radius); data.remote = remote.checked; data.active = profile ? Boolean(profile.active) : true; data.searchTerms = searchTerms; profile ? updateSearchProfile(profile.id, data) : addSearchProfile(data); closeModal(form.closest(".modal-container")); }; return form;
 }

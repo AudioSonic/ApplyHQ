@@ -51,7 +51,7 @@
 
 .modal-content {
     overflow-y: auto;
-    padding: 0 18px 24px;
+    padding: 14px 18px 24px;
 }
 
 .modal-footer {
@@ -85,6 +85,113 @@
     gap: 0;
 }
 
+.search-profile-modal-form {
+    gap: 0;
+}
+
+.search-profile-modal-form > label:not(.search-profile-checkbox-row),
+.search-profile-modal-form > select,
+.search-profile-modal-form > input {
+    color: var(--color-text);
+    font-size: 13px;
+}
+
+.search-profile-modal-form > label:not(.search-profile-checkbox-row) {
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 8px;
+}
+
+.search-profile-modal-form > input:not([type="checkbox"]),
+.search-profile-modal-form > select {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 8px;
+    box-sizing: border-box;
+    height: 42px;
+    margin-bottom: 20px;
+    outline: none;
+    padding: 0 18px;
+    transition: border-color 140ms ease, box-shadow 140ms ease;
+    width: 100%;
+}
+
+.search-profile-modal-form > input:not([type="checkbox"]):focus,
+.search-profile-modal-form > select:focus,
+.search-profile-tags-input:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(82, 41, 211, 0.12);
+}
+
+.search-profile-checkbox-row {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    font-size: 13px;
+    gap: 9px;
+    margin: 0 0 13px;
+}
+
+.search-profile-checkbox-row input {
+    accent-color: var(--color-primary);
+    height: 16px;
+    margin: 0;
+    width: 16px;
+}
+
+.application-modal-form > .button-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-light);
+    margin-top: 6px;
+    width: 100%;
+}
+
+.application-modal-form > .button-primary:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.search-profile-tags-input {
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+    min-height: 42px;
+    padding: 6px 10px;
+}
+
+.search-profile-tags-input input {
+    border: 0;
+    flex: 1 1 140px;
+    min-width: 100px;
+    outline: 0;
+    padding: 5px 0;
+}
+
+.search-profile-tag {
+    align-items: center;
+    background: rgba(82, 41, 211, 0.11);
+    border-radius: 999px;
+    color: var(--color-primary);
+    display: inline-flex;
+    font-size: 12px;
+    gap: 5px;
+    padding: 5px 8px;
+}
+
+.search-profile-tag button {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+    padding: 0;
+}
+
 @media (min-width: 481px) {
     .modal-container {
         align-items: center;
@@ -97,6 +204,6 @@
     }
 
     .modal-content {
-        padding-inline: 24px;
+        padding: 14px 24px 24px;
     }
 }

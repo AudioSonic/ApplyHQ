@@ -34,10 +34,6 @@ h2 {
     line-height: 1.2;
 }
 
-p {
-    color: var(--color-text-secondary);
-}
-
 ::selection {
     background-color: var(--color-primary-soft);
     color: var(--color-text);

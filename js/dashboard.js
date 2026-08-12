@@ -49,7 +49,8 @@ function initializeDashboard() {
     bindApplicationCardElements();
     bindSearchControls();
     loadApplications();
-    createSearchProfileCard();
+    loadSearchProfiles();
+    document.getElementById("open-searchProfile-modal-button")?.addEventListener("click", () => openSearchProfileModal());
 }
 
 function createOverviewSection() {
@@ -178,6 +179,7 @@ function createListContainer(config) {
     container.id = config.containerId 
     emptyText.textContent = "Noch keine passenden " + config.title + " vorhanden.";
     applicationList.id = config.listId
+    emptyState.dataset.emptyStateFor = config.listId;
 
     emptyState.append(emptyText);
     container.append(emptyState, applicationList);
@@ -194,7 +196,7 @@ function createDashboardPanelFooter(config) {
 
     addButton.id = config.buttonId;
     addButton.type = "button";
-    addButton.textContent = config.title + " manuell hinzufügen";
+    addButton.textContent = config.title + " hinzufügen";
     footer.append(addButton);
 
     return footer;

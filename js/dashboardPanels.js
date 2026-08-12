@@ -19,5 +19,5 @@ const searchProfilePanel = {
     searchPlaceholder: "Suche nach Suchprofil...",
     counterId: "searchProfile-count",
     searchBarId: "searchProfile-searchbar",
-    buttonId: "open-seachProfile-modal-button"
+    buttonId: "open-searchProfile-modal-button"
 };

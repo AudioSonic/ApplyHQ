@@ -11,7 +11,7 @@
 }
 
 .dashboard-panel-overview.panel {
-    height: 100vh;
+    max-height: 80vh;
     min-width: 0;
 }
 
