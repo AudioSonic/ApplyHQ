@@ -3,7 +3,7 @@ main = "src/index.js"
 compatibility_date = "2026-08-23"
 
 [vars]
-ALLOWED_ORIGIN = "*"
+ALLOWED_ORIGIN = "https://audiosonic.github.io,http://localhost:3000,http://127.0.0.1:3000"
 
 # Optional: only set this as a Cloudflare secret when the provider requires it.
 # wrangler secret put BA_API_KEY

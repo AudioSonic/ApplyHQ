@@ -50,7 +50,7 @@ function getDistanceBetweenCities(firstCity, secondCity) {
 }
 
 function isJobNewSinceLastSearch(job, profile) {
-    return !profile.lastSearch || job.publishedAt > profile.lastSearch;
+    return !profile.lastSearch || !job.publishedAt || job.publishedAt > profile.lastSearch;
 }
 
 function getKeywordMatch(job, profile) {
@@ -62,6 +62,7 @@ function getKeywordMatch(job, profile) {
     const searchableText = normalizeSearchText([
         job.position,
         job.company,
+        job.description,
         ...(job.keywords || [])
     ].join(" "));
     const matchedKeywords = keywords.filter(keyword => searchableText.includes(keyword));
@@ -97,9 +98,18 @@ function normalizeDuplicateValue(value) {
     return normalizeSearchText(value).replace(/[^a-z0-9äöüß]+/gi, " ").trim();
 }
 
+function normalizePositionForDuplicate(value, city = "") {
+    let normalized = normalizeSearchText(value);
+    if (normalized.includes(":")) normalized = normalized.slice(normalized.indexOf(":") + 1);
+    normalized = normalized.replace(/\([^)]*(?:m|w|d|f)[^)]*\)/gi, "");
+    const normalizedCity = normalizeSearchText(city);
+    if (normalizedCity) normalized = normalized.replace(new RegExp(`\\s+in\\s+${normalizedCity.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\$&")}\\s*$`, "i"), "");
+    return normalizeDuplicateValue(normalized);
+}
+
 function isSameCompanyAndPosition(application, job) {
     return normalizeDuplicateValue(application.company) === normalizeDuplicateValue(job.company)
-        && normalizeDuplicateValue(application.position) === normalizeDuplicateValue(job.position);
+        && normalizePositionForDuplicate(application.position, application.city) === normalizePositionForDuplicate(job.position, job.city);
 }
 
 function isWithinSixMonths(dateValue, referenceDate = new Date()) {
@@ -112,6 +122,8 @@ function isWithinSixMonths(dateValue, referenceDate = new Date()) {
 }
 
 function classifySearchJob(job, referenceDate = new Date()) {
+    const sameExternalId = applications.some(application => application.externalId && job.externalId && application.externalId === job.externalId);
+    if (sameExternalId) return { status: "duplicate", reason: "Diese Stelle wurde bereits gefunden." };
     const sameUrl = applications.some(application => application.url && application.url === job.url);
     if (sameUrl) return { status: "duplicate", reason: "Diese Stelle wurde bereits gefunden." };
 
@@ -139,7 +151,10 @@ function getAutomaticApplicationData(job) {
         status: "open",
         tag: normalizeSearchText(job.position).includes("junior") ? "junior" : "-",
         url: job.url,
-        notes: ""
+        notes: "",
+        externalId: job.externalId,
+        source: job.source,
+        publishedAt: job.publishedAt
     };
 }
 
@@ -163,7 +178,7 @@ function startSearchProfileSearch(profile) {
             setTimeout(() => showSearchConfirmation(modal, profile, result, startedAt), 350);
         }).catch(error => {
             updateStatus(`Suche fehlgeschlagen: ${error.message}`);
-            setTimeout(() => showSearchConfirmation(modal, profile, { newJobs: [], duplicates: [], checkedCount: 0, errors: [{ message: error.message }] }, startedAt), 350);
+            setTimeout(() => showSearchConfirmation(modal, profile, { newJobs: [], duplicates: [], checkedCount: 0, errors: [{ message: error.message }], fatalError: true }, startedAt), 350);
         });
     }, 350);
 }
@@ -206,17 +221,26 @@ async function fetchJobsFromBackend(profile) {
         body: JSON.stringify(profile)
     });
     const payload = await response.json();
-    if (!response.ok || (Array.isArray(payload.errors) && payload.errors.length)) {
-        throw new Error(payload.errors?.[0]?.message || `Backend antwortete mit HTTP ${response.status}.`);
+    if (!response.ok) {
+        throw new Error(payload.errors?.[0]?.message || payload.error || `Backend antwortete mit HTTP ${response.status}.`);
     }
-    return Array.isArray(payload.jobs) ? payload.jobs : [];
+    if (!Array.isArray(payload.jobs)) throw new Error("Backend lieferte kein gültiges Stellenformat.");
+    return payload;
 }
 
 async function runSearchProfile(profile, referenceDate) {
-    const jobs = configuredJobSearchApiUrl
-        ? await fetchJobsFromBackend(profile)
-        : mockJobSource;
-    return evaluateJobs(profile, jobs, referenceDate);
+    if (!configuredJobSearchApiUrl) return evaluateJobs(profile, mockJobSource, referenceDate);
+    const payload = await fetchJobsFromBackend(profile);
+    const result = evaluateJobs(profile, payload.jobs, referenceDate);
+    result.source = payload.source || "Backend";
+    result.rawCount = payload.rawCount ?? payload.jobs.length;
+    result.invalidCount = payload.invalidCount || 0;
+    result.detailsFetchedCount = payload.detailsFetchedCount || 0;
+    result.detailsFailedCount = payload.detailsFailedCount || 0;
+    result.oldCount = payload.oldCount || 0;
+    result.errors = Array.isArray(payload.errors) ? payload.errors : [];
+    result.providers = Array.isArray(payload.providers) ? payload.providers : [];
+    return result;
 }
 
 function runLocalSearch(profile, referenceDate) {
@@ -232,9 +256,11 @@ function showSearchConfirmation(modal, profile, result, searchedAt) {
     text.textContent = `Suche abgeschlossen. Es wurden ${result.newJobs.length} Stellen gefunden.`;
     const details = document.createElement("p");
     details.className = "search-confirmation-details";
-    details.textContent = result.errors?.length
-        ? `Die Suche konnte nicht vollständig ausgeführt werden: ${result.errors[0].message}`
-        : `${result.duplicates.length} bereits bekannte Stelle(n) wurden übersprungen.`;
+    const providerStats = result.providers?.length
+        ? ` · ${result.providers.map(provider => `${provider.source}: ${provider.normalizedCount}`).join(" · ")}`
+        : "";
+    const partialErrors = result.errors?.length ? ` · Hinweis: ${result.errors.map(error => `${error.source}: ${error.message}`).join("; ")}` : "";
+    details.textContent = `${result.checkedCount} geprüft · ${result.duplicates.length} bereits bekannt · ${result.oldCount || 0} alte Stelle(n) übersprungen · ${result.invalidCount || 0} unvollständig übersprungen${result.detailsFetchedCount ? ` · ${result.detailsFetchedCount} Detailbeschreibungen ausgewertet` : ""}${providerStats}${partialErrors}.`;
     summary.append(text, details);
     modal.content.append(summary);
 
@@ -244,7 +270,7 @@ function showSearchConfirmation(modal, profile, result, searchedAt) {
     confirmButton.textContent = result.newJobs.length ? "Stellen übernehmen" : "Schließen";
     confirmButton.onclick = () => {
         if (result.newJobs.length) importSearchJobs(result.newJobs);
-        if (!result.errors?.length) finishSearchProfileSearch(profile, result.newJobs.length, searchedAt);
+        if (!result.fatalError) finishSearchProfileSearch(profile, result.newJobs.length, searchedAt);
         closeModal(modal.container);
     };
     modal.footer.append(confirmButton);

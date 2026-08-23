@@ -15,6 +15,11 @@ function loadApplications(){
     try{
         const parsedApplications = JSON.parse(loadedApplications);
         applications = Array.isArray(parsedApplications) ? parsedApplications : [];
+        applications.forEach(application => {
+            if (application.url?.includes("jobboerse.arbeitsagentur.de") && application.externalId) {
+                application.url = `https://www.arbeitsagentur.de/jobsuche/suche?angebotsart=1&id=${encodeURIComponent(application.externalId)}`;
+            }
+        });
     }
     catch(error){
         applications = [];

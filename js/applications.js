@@ -14,6 +14,9 @@ function addApplication(applicationData){
         tag: applicationData.tag,
         url: applicationData.url,
         notes: applicationData.notes,
+        externalId: applicationData.externalId || "",
+        source: applicationData.source || "",
+        publishedAt: applicationData.publishedAt || "",
         logo: null
     };
 
