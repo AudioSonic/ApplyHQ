@@ -3,7 +3,7 @@ let applications = [];
 let applicationId = 0;
 
 function addApplication(applicationData){
-    applications.push({
+    const application = {
         id: applicationId,
         company: applicationData.company,
         position: applicationData.position,
@@ -15,11 +15,15 @@ function addApplication(applicationData){
         url: applicationData.url,
         notes: applicationData.notes,
         logo: null
-    });
+    };
+
+    applications.push(application);
 
     applicationId++;
     saveApplications();
     renderApplications();
+
+    return application;
 }
 
 function deleteApplication(id){

@@ -16,13 +16,13 @@ function createSearchProfileCard(profile) {
     const position = document.createElement("span"); position.textContent = profile.position; const location = document.createElement("span"); location.textContent = `${profile.location} · ${profile.radius} km${profile.remote ? " · Remote möglich" : ""}`; details.append(row, position, location);
     const results = document.createElement("div"); results.className = "search-profile-results"; results.append(Object.assign(document.createElement("span"), { textContent: "Neue Stellen" }), Object.assign(document.createElement("span"), { textContent: profile.newJobs || 0 }));
     const buttons = document.createElement("div"); buttons.className = "search-profile-buttons";
-    const start = document.createElement("button"); start.className = "button button-primary search-profile-button"; start.type = "button"; start.textContent = "Suche starten";
+    const start = document.createElement("button"); start.className = "button button-primary search-profile-button"; start.type = "button"; start.textContent = "Suche starten"; start.onclick = () => startSearchProfileSearch(profile);
     const startIcon = document.createElement("img"); startIcon.src = "assets/icons/icon_arrow_right.png"; startIcon.alt = ""; start.prepend(startIcon);
     const edit = document.createElement("button"); edit.className = "button search-profile-button"; edit.type = "button"; edit.textContent = "Bearbeiten"; edit.onclick = () => openSearchProfileModal(profile);
     const remove = document.createElement("button"); remove.className = "search-profile-button icon-button"; remove.type = "button"; remove.setAttribute("aria-label", "Suchprofil löschen"); const removeIcon = document.createElement("img"); removeIcon.src = "assets/icons/icon_delete.svg"; removeIcon.alt = ""; remove.append(removeIcon); remove.onclick = () => deleteSearchProfile(profile.id); buttons.append(start, edit, remove);
     card.append(details, results, document.createElement("hr"), buttons); return card;
 }
-function addSearchProfile(data) { searchProfiles.push({ id: searchProfileId++, ...data, newJobs: 0 }); saveSearchProfiles(); renderSearchProfiles(); }
+function addSearchProfile(data) { searchProfiles.push({ id: searchProfileId++, ...data, newJobs: 0, lastSearch: null }); saveSearchProfiles(); renderSearchProfiles(); }
 function updateSearchProfile(id, data) { const profile = searchProfiles.find(p => p.id === id); if (profile) { Object.assign(profile, data); saveSearchProfiles(); renderSearchProfiles(); } }
 function deleteSearchProfile(id) { searchProfiles = searchProfiles.filter(p => p.id !== id); saveSearchProfiles(); renderSearchProfiles(); }
 function openSearchProfileModal(profile = null) { const modal = createModal(); modal.title.textContent = profile ? "Suchprofil bearbeiten" : "Neues Suchprofil"; modal.content.append(createSearchProfileModal(profile)); }
