@@ -137,7 +137,8 @@ function createSearchControls(config) {
             ["descending", "Absteigend"]
         ] : [
             ["newest", "Neueste zuerst"],
-            ["oldest", "Älteste zuerst"]
+            ["oldest", "Älteste zuerst"],
+            ["alphabetical", "Alphabetisch"]
         ]),
         createSelectControl(config.isSearchProfile ? "searchProfile-filter" : "application-filter", "Filter:", config.isSearchProfile ? [
             ["all", "Alle Suchprofile"],

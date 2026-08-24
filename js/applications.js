@@ -40,6 +40,22 @@ function deleteApplication(id){
 }
 
 function sortApplications(applicationList, order){
+    if (order === "alphabetical") {
+        return [...applicationList].sort((firstApplication, secondApplication) => {
+            const companyOrder = String(firstApplication.company || "").localeCompare(
+                String(secondApplication.company || ""),
+                "de-DE",
+                { sensitivity: "base" }
+            );
+            if (companyOrder !== 0) return companyOrder;
+            return String(firstApplication.position || "").localeCompare(
+                String(secondApplication.position || ""),
+                "de-DE",
+                { sensitivity: "base" }
+            );
+        });
+    }
+
     return [...applicationList].sort((firstApplication, secondApplication) => {
         const firstDate = new Date(firstApplication.date).getTime();
         const secondDate = new Date(secondApplication.date).getTime();
