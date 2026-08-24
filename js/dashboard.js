@@ -138,6 +138,7 @@ function createSearchControls(config) {
         ]),
         createSelectControl("application-filter", "Filter:", [
             ["all", "Alle Bewerbungen"],
+            ["new", "Neue Bewerbungen"],
             ["open", "Offen"],
             ["applied", "Beworben"],
             ["interview", "Interview"],

@@ -96,6 +96,10 @@ function getApplicationFormData(applicationForm) {
         status: getFormValue(applicationForm, "#application-status"),
         tag: getFormValue(applicationForm, "#application-tag"),
         url: getFormValue(applicationForm, "#application-url"),
+        salutation: getFormValue(applicationForm, "#application-salutation"),
+        contactName: getFormValue(applicationForm, "#application-contact-name"),
+        description: getFormValue(applicationForm, "#application-description"),
+        details: getFormValue(applicationForm, "#application-details"),
         notes: getFormValue(applicationForm, "#application-notes")
     };
 }

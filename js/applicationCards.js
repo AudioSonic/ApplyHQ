@@ -64,7 +64,9 @@ function getVisibleApplications() {
         const company = (application.company || "").toLowerCase();
         const position = (application.position || "").toLowerCase();
         const matchesSearch = !searchValue || company.includes(searchValue) || position.includes(searchValue);
-        const matchesFilter = uiState.filter === "all" || application.status === uiState.filter;
+        const matchesFilter = uiState.filter === "all"
+            || (uiState.filter === "new" && !application.date)
+            || application.status === uiState.filter;
 
         return matchesSearch && matchesFilter;
     });
@@ -114,6 +116,9 @@ function createApplicationCard(application) {
     applicationCard.classList.add("application-card");
     logoFrame.classList.add("application-logo");
     information.classList.add("application-info");
+    information.setAttribute("role", "button");
+    information.setAttribute("tabindex", "0");
+    information.setAttribute("aria-label", `Details zu ${application.position} bei ${application.company} öffnen`);
     position.classList.add("application-position");
     companyName.classList.add("application-company-name");
     location.classList.add("application-location");
@@ -154,6 +159,16 @@ function createApplicationCard(application) {
     }
     deleteButton.addEventListener("click", () => deleteApplication(application.id));
     editButton.addEventListener("click", () => openApplicationModal(application));
+    information.addEventListener("click", () => openApplicationDetailsModal(application));
+    information.addEventListener("keydown", event => {
+        if(event.key === "Enter" || event.key === " "){
+            event.preventDefault();
+            openApplicationDetailsModal(application);
+        }
+    });
+    [deleteButton, editButton].forEach(button => {
+        button.addEventListener("click", event => event.stopPropagation());
+    });
 
     deleteButton.append(deleteButtonIcon);
     editButton.append(editButtonIcon);

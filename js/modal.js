@@ -1,10 +1,10 @@
-function createModal() {
+function createModal(titleTag = "h2") {
     const modalContainer = document.createElement("div");
     const modal = document.createElement("div");
     const modalHeader = document.createElement("header");
     const modalContent = document.createElement("section");
     const modalFooter = document.createElement("footer");
-    const modalTitle = document.createElement("h2");
+    const modalTitle = document.createElement(titleTag);
     const btCloseModal = document.createElement("button");
 
     modalContainer.classList.add("modal-container");

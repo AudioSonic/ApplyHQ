@@ -34,6 +34,18 @@ function createApplicationModal(application = null){
     const tagLabel = createLabel("application-tag","Stichwort");
     const tagSelect = document.createElement("select");
 
+    const contactRow = document.createElement("div");
+    const salutationColumn = document.createElement("div");
+    const salutationLabel = createLabel("application-salutation", "Anrede");
+    const salutationSelect = document.createElement("select");
+    const contactNameColumn = document.createElement("div");
+    const contactNameLabel = createLabel("application-contact-name", "Name");
+    const contactNameInput = createInput("application-contact-name", "text", "z. B. Max Mustermann");
+    const descriptionLabel = createLabel("application-description", "Stellenbeschreibung");
+    const descriptionTextarea = document.createElement("textarea");
+    const applicationDetailsLabel = createLabel("application-details", "Details");
+    const applicationDetailsTextarea = document.createElement("textarea");
+
     const notesLabel = createLabel("application-notes", "Notizen");
     const notesTextarea = document.createElement("textarea");
 
@@ -57,6 +69,8 @@ function createApplicationModal(application = null){
     stateColumn.classList.add("vertical-orientation");
     urlColumn.classList.add("vertical-orientation");
     tagColumn.classList.add("vertical-orientation");
+    salutationColumn.classList.add("vertical-orientation");
+    contactNameColumn.classList.add("vertical-orientation");
     cityInput.maxLength = 80;
     stateInput.maxLength = 80;
 
@@ -64,8 +78,7 @@ function createApplicationModal(application = null){
     detailsRow.classList.add("horizontal-orientation");
     dateColumn.classList.add("vertical-orientation");
     statusColumn.classList.add("vertical-orientation");
-    dateInput.required = true;
-    setDefaultApplicationDate(dateInput);
+    dateInput.max = new Date().toISOString().split("T")[0];
 
     statusSelect.id = "application-status";
     statusSelect.name = "status";
@@ -84,6 +97,12 @@ function createApplicationModal(application = null){
     );
     tagSelect.id = "application-tag";
     tagSelect.name = "tag";
+
+    contactRow.classList.add("horizontal-orientation");
+    salutationSelect.id = "application-salutation";
+    salutationSelect.name = "salutation";
+    salutationSelect.append(createOption("-", "-"), createOption("Herr", "Herr"), createOption("Frau", "Frau"));
+    contactNameInput.maxLength = 120;
     
     urlInput.id = "application-url";
     urlInput.name = "Url";
@@ -92,6 +111,15 @@ function createApplicationModal(application = null){
     notesTextarea.rows = 3;
     notesTextarea.maxLength = 240;
     notesTextarea.placeholder = "Notizen zur Bewerbung (optional)";
+
+    descriptionTextarea.id = "application-description";
+    descriptionTextarea.rows = 3;
+    descriptionTextarea.maxLength = 10000;
+    descriptionTextarea.placeholder = "Stellenbeschreibung (optional)";
+    applicationDetailsTextarea.id = "application-details";
+    applicationDetailsTextarea.rows = 3;
+    applicationDetailsTextarea.maxLength = 5000;
+    applicationDetailsTextarea.placeholder = "Weitere Details, z. B. Gehalt (optional)";
 
     submitButton.classList.add("button", "button-primary");
     submitButton.type = "submit";
@@ -121,6 +149,9 @@ function createApplicationModal(application = null){
     detailsRow.append(urlColumn, tagColumn);
     urlColumn.append(urlLabel, urlInput);
     tagColumn.append(tagLabel, tagSelect);
+    salutationColumn.append(salutationLabel, salutationSelect);
+    contactNameColumn.append(contactNameLabel, contactNameInput);
+    contactRow.append(salutationColumn, contactNameColumn);
 
     submitButton.append(submitIcon, submitText);
     form.append(
@@ -131,6 +162,11 @@ function createApplicationModal(application = null){
         locationRow,
         infoRow,
         detailsRow,
+        contactRow,
+        descriptionLabel,
+        descriptionTextarea,
+        applicationDetailsLabel,
+        applicationDetailsTextarea,
         notesLabel,
         notesTextarea,
         submitButton
@@ -145,10 +181,77 @@ function createApplicationModal(application = null){
         statusSelect.value = application.status || "open";
         urlInput.value = application.url || "";
         tagSelect.value = application.tag || "junior";
+        salutationSelect.value = application.salutation || "-";
+        contactNameInput.value = application.contactName || application.contact || "";
+        descriptionTextarea.value = application.description || "";
+        applicationDetailsTextarea.value = application.details || "";
         notesTextarea.value = application.notes || "";
     }
 
     return form;
+}
+
+function openApplicationDetailsModal(application){
+    const modal = createModal("h1");
+    const content = document.createElement("div");
+    const company = document.createElement("h2");
+    const date = document.createElement("p");
+    const contactLabel = document.createElement("h3");
+    const contact = document.createElement("p");
+    const descriptionLabel = document.createElement("h3");
+    const description = document.createElement("div");
+    const metadata = document.createElement("div");
+    const detailsLabel = document.createElement("h3");
+    const details = document.createElement("div");
+
+    modal.container.classList.add("application-details-modal-container");
+    content.classList.add("application-details-modal");
+    company.textContent = application.company || "Keine Firma angegeben";
+    modal.title.textContent = application.position || "Stellenanzeige";
+    date.textContent = `Bewerbungsdatum: ${formatApplicationDate(application.date)}`;
+    contactLabel.textContent = "Ansprechperson";
+    const contactParts = [application.salutation, application.contactName || application.contact]
+        .filter(value => value && value !== "-");
+    contact.textContent = contactParts.join(" ") || "Keine Ansprechperson angegeben";
+    descriptionLabel.textContent = "Stellenbeschreibung";
+    description.classList.add("application-detail-text");
+    description.textContent = application.description || "Keine Stellenbeschreibung hinterlegt.";
+    metadata.classList.add("application-detail-metadata");
+    metadata.append(
+        createApplicationDetail("Stadt", application.city),
+        createApplicationDetail("Bundesland", application.state),
+        createApplicationDetail("Status", statusLabels[application.status] || application.status),
+        createApplicationDetail("Stichwort", tagLabels[application.tag] || application.tag),
+        createApplicationLinkDetail("URL", application.url)
+    );
+    detailsLabel.textContent = "Details";
+    details.classList.add("application-detail-text");
+    details.textContent = application.details || "Keine weiteren Details hinterlegt.";
+
+    content.append(company, date, contactLabel, contact, metadata, descriptionLabel, description, detailsLabel, details);
+    modal.content.append(content);
+}
+
+function createApplicationDetail(label, value){
+    const item = document.createElement("div");
+    const itemLabel = document.createElement("strong");
+    const itemValue = document.createElement("span");
+    item.classList.add("application-detail-item");
+    itemLabel.textContent = label;
+    itemValue.textContent = value && value !== "-" ? value : "Nicht angegeben";
+    item.append(itemLabel, itemValue);
+    return item;
+}
+
+function createApplicationLinkDetail(label, value){
+    const item = createApplicationDetail(label, "");
+    const link = document.createElement("a");
+    link.href = value || "#";
+    link.textContent = value || "Nicht angegeben";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    item.lastChild.replaceWith(link);
+    return item;
 }
 
 function createLabel(inputId, text){
@@ -192,6 +295,10 @@ function saveApplicationEdit(event, application){
     application.status = applicationData.status;
     application.tag = applicationData.tag;
     application.url = applicationData.url;
+    application.salutation = applicationData.salutation;
+    application.contactName = applicationData.contactName;
+    application.description = applicationData.description;
+    application.details = applicationData.details;
     application.notes = applicationData.notes;
 
     saveApplications();

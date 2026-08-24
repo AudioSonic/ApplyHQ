@@ -32,12 +32,14 @@
     padding: 14px 16px 0;
 }
 
+.modal-header h1,
 .modal-header h2 {
     margin: 0;
     font-size: 18px;
     position: relative;
 }
 
+.modal-header h1::after,
 .modal-header h2::after {
     background-color: var(--color-primary);
     border-radius: 999px;
@@ -256,6 +258,11 @@
     .modal {
         max-height: min(92dvh, 760px);
         width: min(100%, 420px);
+    }
+
+    .application-details-modal-container .modal {
+        max-height: min(92dvh, 860px);
+        width: min(100%, 840px);
     }
 
     .modal-content {
