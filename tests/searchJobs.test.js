@@ -37,6 +37,65 @@ test("akzeptiert aufgerundete Hälfte der Keywords", () => {
     assert.deepEqual(result.matchedKeywords, ["html", "css"]);
 });
 
+test("behandelt Softwareentwicklung, Softwareentwickler und Software Entwickler gleich", () => {
+    const context = loadSearchLogic();
+    const result = context.evaluateSearchJob({
+        company: "Test GmbH",
+        position: "Software Entwickler (m/w/d)",
+        city: "Leipzig",
+        keywords: [],
+        publishedAt: "2026-08-23"
+    }, profile({ searchTerms: ["softwareentwicklung"] }));
+    assert.equal(result.isMatch, true);
+    assert.deepEqual(result.matchedKeywords, ["softwareentwicklung"]);
+});
+
+test("behandelt Deutschland als deutschlandweiten Standort", () => {
+    const context = loadSearchLogic();
+    const result = context.evaluateSearchJob({
+        company: "Test GmbH",
+        position: "Frontend Developer",
+        city: "Berlin",
+        keywords: ["html"],
+        publishedAt: "2026-08-23"
+    }, profile({ location: "Deutschland", radius: 0, searchTerms: ["html"] }));
+    assert.equal(result.isMatch, true);
+    assert.equal(result.isLocationMatch, true);
+});
+
+test("behandelt einen leeren Standort als deutschlandweite Suche", () => {
+    const context = loadSearchLogic();
+    const result = context.evaluateSearchJob({
+        company: "Test GmbH",
+        position: "Frontend Developer",
+        city: "Berlin",
+        keywords: ["html"],
+        publishedAt: "2026-08-23"
+    }, profile({ location: "", searchTerms: ["html"] }));
+    assert.equal(result.isMatch, true);
+    assert.equal(result.isLocationMatch, true);
+});
+
+test("behandelt einen leeren Radius als exakten Standort", () => {
+    const context = loadSearchLogic();
+    const matchingJob = context.evaluateSearchJob({
+        company: "Test GmbH",
+        position: "Frontend Developer",
+        city: "Leipzig",
+        keywords: ["html"],
+        publishedAt: "2026-08-23"
+    }, profile({ radius: "", searchTerms: ["html"] }));
+    const distantJob = context.evaluateSearchJob({
+        company: "Test GmbH",
+        position: "Frontend Developer",
+        city: "Berlin",
+        keywords: ["html"],
+        publishedAt: "2026-08-23"
+    }, profile({ radius: "", searchTerms: ["html"] }));
+    assert.equal(matchingJob.isLocationMatch, true);
+    assert.equal(distantJob.isLocationMatch, false);
+});
+
 test("akzeptiert eine passende Remote-Stelle außerhalb des Radius", () => {
     const context = loadSearchLogic();
     const result = context.evaluateSearchJob({

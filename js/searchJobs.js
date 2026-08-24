@@ -20,14 +20,81 @@ const mockCityCoordinates = {
 
 const configuredJobSearchApiUrl = typeof window !== "undefined" ? window.APPLYHQ_JOB_SEARCH_API_URL || "" : "";
 
+// Bewusst kuratierte Varianten für häufige Begriffe aus der Softwareentwicklung.
+// Die Schlüssel sind kanonische Suchbegriffe; die Werte enthalten nur fachlich
+// nahe Schreib- und Sprachvarianten, keine allgemeine Volltext-Synonymik.
+const softwareDevelopmentSynonyms = {
+    html: ["html", "html5"],
+    css: ["css", "css3"],
+    javascript: ["javascript", "java script", "js", "ecmascript"],
+    typescript: ["typescript", "type script", "ts"],
+    react: ["react", "react.js", "reactjs"],
+    vue: ["vue", "vue.js", "vuejs"],
+    angular: ["angular", "angular.js", "angularjs"],
+    nodejs: ["nodejs", "node.js", "node js"],
+    php: ["php", "php 8"],
+    csharp: ["c#", "c sharp", "csharp"],
+    dotnet: [".net", "dotnet", "dot net"],
+    java: ["java", "java ee", "jakarta ee"],
+    python: ["python", "python 3"],
+    sql: ["sql", "t-sql", "tsql"],
+    frontend: ["frontend", "front-end", "front end"],
+    backend: ["backend", "back-end", "back end"],
+    fullstack: ["fullstack", "full-stack", "full stack"],
+    webentwicklung: ["webentwicklung", "web-entwicklung", "web entwicklung", "web development"],
+    webentwickler: ["webentwickler", "web-entwickler", "web entwickler", "web developer"],
+    softwareentwicklung: [
+        "softwareentwicklung",
+        "software-entwicklung",
+        "software entwicklung",
+        "softwareentwickler",
+        "software-entwickler",
+        "software entwickler",
+        "software developer"
+    ],
+    softwareentwickler: [
+        "softwareentwicklung",
+        "software-entwicklung",
+        "software entwicklung",
+        "softwareentwickler",
+        "software-entwickler",
+        "software entwickler",
+        "software developer"
+    ],
+    softwaredeveloper: [
+        "softwareentwicklung",
+        "software-entwicklung",
+        "software entwicklung",
+        "softwareentwickler",
+        "software-entwickler",
+        "software entwickler",
+        "software developer"
+    ],
+    softwareengineer: ["software engineer", "software-engineer", "softwareingenieur"]
+};
+
 function normalizeSearchText(value) {
     return String(value || "").trim().toLocaleLowerCase("de-DE");
+}
+
+function isNationwideLocation(value) {
+    const location = normalizeSearchText(value);
+    return !location || /^(deutschland|bundesweit|ganz deutschland)$/.test(location);
 }
 
 function getSearchKeywords(profile) {
     return Array.isArray(profile.searchTerms)
         ? profile.searchTerms.map(normalizeSearchText).filter(Boolean)
         : [];
+}
+
+function getKeywordVariants(keyword) {
+    const normalizedKeyword = normalizeSearchText(keyword);
+    const compactKeyword = normalizedKeyword.replace(/[\s-]+/g, "");
+    const variants = softwareDevelopmentSynonyms[normalizedKeyword]
+        || softwareDevelopmentSynonyms[compactKeyword]
+        || [normalizedKeyword];
+    return [...new Set(variants.map(normalizeSearchText).filter(Boolean))];
 }
 
 function getDistanceBetweenCities(firstCity, secondCity) {
@@ -65,7 +132,9 @@ function getKeywordMatch(job, profile) {
         job.description,
         ...(job.keywords || [])
     ].join(" "));
-    const matchedKeywords = keywords.filter(keyword => searchableText.includes(keyword));
+    const matchedKeywords = keywords.filter(keyword =>
+        getKeywordVariants(keyword).some(variant => searchableText.includes(variant))
+    );
     const requiredKeywords = Math.ceil(keywords.length / 2);
 
     return {
@@ -79,7 +148,8 @@ function getKeywordMatch(job, profile) {
 function evaluateSearchJob(job, profile) {
     const distance = getDistanceBetweenCities(profile.location, job.city);
     const isRemoteMatch = Boolean(profile.remote && job.remote);
-    const isLocationMatch = isRemoteMatch || distance === 0 || (distance !== null && distance <= Number(profile.radius));
+    const isNationwideMatch = isNationwideLocation(profile.location);
+    const isLocationMatch = isNationwideMatch || isRemoteMatch || distance === 0 || (distance !== null && distance <= Number(profile.radius));
     const keywordMatch = getKeywordMatch(job, profile);
     const employmentMatch = !profile.employmentType || !job.employmentType || profile.employmentType === job.employmentType;
 

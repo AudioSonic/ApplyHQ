@@ -31,6 +31,11 @@ function normalizeText(value) {
     return String(value || "").trim();
 }
 
+function isNationwideLocation(value) {
+    const location = normalizeText(value);
+    return !location || /^(deutschland|bundesweit|ganz deutschland)$/i.test(location);
+}
+
 function getSearchTerm(profile) {
     const terms = Array.isArray(profile.searchTerms)
         ? profile.searchTerms.map(normalizeText).filter(Boolean)
@@ -39,9 +44,7 @@ function getSearchTerm(profile) {
 }
 
 function validateProfile(profile) {
-    if (!profile || !normalizeText(profile.location)) {
-        return "Ein Suchprofil mit Standort ist erforderlich.";
-    }
+    if (!profile) return "Ein gültiges Suchprofil ist erforderlich.";
     if (normalizeText(profile.location).length > 120) return "Der Standort ist zu lang.";
     if (profile.radius !== undefined && (!Number.isFinite(Number(profile.radius)) || Number(profile.radius) < 0 || Number(profile.radius) > 500)) {
         return "Der Suchradius muss zwischen 0 und 500 km liegen.";
@@ -190,8 +193,10 @@ async function enrichJobsWithDetails(jobs, env) {
 function buildSearchUrl(profile) {
     const url = new URL(`${BA_API_BASE_URL}/pc/v6/jobs`);
     url.searchParams.set("was", getSearchTerm(profile));
-    url.searchParams.set("wo", normalizeText(profile.location));
-    url.searchParams.set("umkreis", String(Number(profile.radius) || 0));
+    if (!isNationwideLocation(profile.location)) {
+        url.searchParams.set("wo", normalizeText(profile.location));
+        url.searchParams.set("umkreis", String(Number(profile.radius) || 0));
+    }
     url.searchParams.set("page", "1");
     url.searchParams.set("size", String(MAX_DETAIL_REQUESTS));
     return url;
