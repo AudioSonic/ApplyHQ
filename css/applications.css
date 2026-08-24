@@ -85,17 +85,24 @@
 .application-logo {
     align-items: center;
     align-self: start;
-    background: linear-gradient(135deg, #e8f2ff, #f4f0ff);
+    background: transparent;
     border-radius: 14px;
     color: var(--color-primary);
     display: flex;
     font-size: 21px;
     font-weight: 800;
-    height: 50px;
+    height: auto;
     width: 50px;
     justify-content: center;
-    overflow: hidden;
+    overflow: visible;
+    flex-direction: column;
+    gap: 5px;
 }
+
+.application-logo-visual { align-items: center; background: linear-gradient(135deg, #e8f2ff, #f4f0ff); border-radius: 14px; display: flex; height: 50px; justify-content: center; overflow: hidden; width: 50px; }
+.favorite-button { background: transparent; border: 0; color: #c2c8d3; cursor: pointer; font-size: 24px; height: 26px; line-height: 1; padding: 0; width: 50px; }
+.favorite-button:hover, .favorite-button:focus-visible, .favorite-button[aria-pressed="true"] { color: #f2b01e; }
+.favorite-button:focus-visible { border-radius: 6px; outline: 3px solid rgba(82, 41, 211, 0.2); }
 
 .application-logo img {
     height: 100%;

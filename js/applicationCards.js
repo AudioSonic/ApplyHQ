@@ -65,8 +65,9 @@ function getVisibleApplications() {
         const position = (application.position || "").toLowerCase();
         const matchesSearch = !searchValue || company.includes(searchValue) || position.includes(searchValue);
         const matchesFilter = uiState.filter === "all"
+            || (uiState.filter === "favorites" && application.favorite === true)
             || (uiState.filter === "new" && !application.date)
-            || application.status === uiState.filter;
+            || (!["all", "favorites", "new"].includes(uiState.filter) && application.status === uiState.filter);
 
         return matchesSearch && matchesFilter;
     });
@@ -77,6 +78,8 @@ function getVisibleApplications() {
 function createApplicationCard(application) {
     const applicationCard = document.createElement("article");
     const logoFrame = document.createElement("div");
+    const logoVisual = document.createElement("div");
+    const favoriteButton = document.createElement("button");
     const companyName = document.createElement("h3");
     const position = document.createElement("p");
     const locationSection = document.createElement("div");
@@ -115,6 +118,7 @@ function createApplicationCard(application) {
 
     applicationCard.classList.add("application-card");
     logoFrame.classList.add("application-logo");
+    logoVisual.classList.add("application-logo-visual");
     information.classList.add("application-info");
     information.setAttribute("role", "button");
     information.setAttribute("tabindex", "0");
@@ -132,6 +136,20 @@ function createApplicationCard(application) {
     hr.classList.add("application-card-hr");
     status.classList.add("status-badge", `status-${application.status}`);
 
+    favoriteButton.type = "button";
+    favoriteButton.classList.add("favorite-button");
+    favoriteButton.textContent = application.favorite ? "★" : "☆";
+    favoriteButton.setAttribute("aria-label", application.favorite ? `Favorit für ${application.position} entfernen` : `${application.position} als Favorit speichern`);
+    favoriteButton.setAttribute("aria-pressed", String(application.favorite === true));
+    favoriteButton.addEventListener("click", event => {
+        event.stopPropagation();
+        application.favorite = !application.favorite;
+        favoriteButton.textContent = application.favorite ? "★" : "☆";
+        favoriteButton.setAttribute("aria-pressed", String(application.favorite));
+        favoriteButton.setAttribute("aria-label", application.favorite ? `Favorit für ${application.position} entfernen` : `${application.position} als Favorit speichern`);
+        saveApplications();
+    });
+
     deleteButton.type = "button";
     deleteButton.setAttribute("aria-label", `Bewerbung von ${application.company} löschen`);
     deleteButton.classList.add("icon-button");
@@ -147,10 +165,10 @@ function createApplicationCard(application) {
     if(application.logo){
         logo.src = application.logo;
         logo.alt = `${application.company} Logo`;
-        logoFrame.append(logo);
+        logoVisual.append(logo);
     }
     else{
-        logoFrame.append(logoFallback);
+        logoVisual.append(logoFallback);
     }
 
     if(application.tag && application.tag !== "-"){
@@ -191,6 +209,7 @@ function createApplicationCard(application) {
     }
     options.append(deleteButton, editButton);
     details.append(status);
+    logoFrame.append(logoVisual, favoriteButton);
     infoSection.append(logoFrame, information, options);
 
     applicationCard.append(infoSection, hr, details);
@@ -216,9 +235,41 @@ function formatApplicationDate(date) {
 }
 
 function formatApplicationLocation(application) {
-    return [application.city, application.state]
+    return [application.city, formatApplicationState(application.state)]
         .filter(Boolean)
         .join(" - ");
+}
+
+function formatApplicationState(state) {
+    const normalized = String(state || "").trim();
+    if (!normalized) return "";
+
+    const knownStates = {
+        BADEN_WUERTTEMBERG: "Baden-Württemberg",
+        BAYERN: "Bayern",
+        BERLIN: "Berlin",
+        BRANDENBURG: "Brandenburg",
+        BREMEN: "Bremen",
+        HAMBURG: "Hamburg",
+        HESSEN: "Hessen",
+        MECKLENBURG_VORPOMMERN: "Mecklenburg-Vorpommern",
+        NIEDERSACHSEN: "Niedersachsen",
+        NORDRHEIN_WESTFALEN: "Nordrhein-Westfalen",
+        RHEINLAND_PFALZ: "Rheinland-Pfalz",
+        SAARLAND: "Saarland",
+        SACHSEN: "Sachsen",
+        SACHSEN_ANHALT: "Sachsen-Anhalt",
+        SCHLESWIG_HOLSTEIN: "Schleswig-Holstein",
+        THUERINGEN: "Thüringen"
+    };
+
+    const key = normalized.toUpperCase().replace(/-/g, "_").replace(/\s+/g, "_");
+    if (knownStates[key]) return knownStates[key];
+
+    return normalized
+        .replace(/_/g, "-")
+        .toLocaleLowerCase("de-DE")
+        .replace(/(^|[-\s])\p{L}/gu, character => character.toLocaleUpperCase("de-DE"));
 }
 
 function getCompanyInitials(company) {

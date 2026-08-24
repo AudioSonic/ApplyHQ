@@ -146,6 +146,7 @@ function createSearchControls(config) {
             ["inactive", "Inaktiv"]
         ] : [
             ["all", "Alle Bewerbungen"],
+            ["favorites", "Nur Favoriten"],
             ["new", "Neue Bewerbungen"],
             ["open", "Offen"],
             ["applied", "Beworben"],

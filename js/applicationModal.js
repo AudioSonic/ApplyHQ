@@ -219,7 +219,7 @@ function openApplicationDetailsModal(application){
     metadata.classList.add("application-detail-metadata");
     metadata.append(
         createApplicationDetail("Stadt", application.city),
-        createApplicationDetail("Bundesland", application.state),
+        createApplicationDetail("Bundesland", formatApplicationState(application.state)),
         createApplicationDetail("Status", statusLabels[application.status] || application.status),
         createApplicationDetail("Stichwort", tagLabels[application.tag] || application.tag),
         createApplicationLinkDetail("URL", application.url)

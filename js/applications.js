@@ -21,6 +21,7 @@ function addApplication(applicationData){
         externalId: applicationData.externalId || "",
         source: applicationData.source || "",
         publishedAt: applicationData.publishedAt || "",
+        favorite: Boolean(applicationData.favorite),
         logo: null
     };
 

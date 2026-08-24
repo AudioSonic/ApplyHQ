@@ -253,13 +253,32 @@ function normalizeArbeitnowJob(job) {
     };
 }
 
+function isGermanArbeitnowJob(job) {
+    const country = normalizeText(job.country || job.land || job.country_code || job.countryCode);
+    const location = normalizeText(job.location);
+    const locationText = `${location} ${country}`.toLocaleLowerCase("de-DE");
+
+    if (country) {
+        return /^(de|deu|germany|deutschland)$/i.test(country.trim());
+    }
+
+    if (!locationText || /^(remote|fully remote|remote deutschland|deutschland|germany)$/i.test(locationText.trim())) {
+        return true;
+    }
+
+    // Arbeitnow liefert den Länderwert nicht bei jedem Datensatz. Diese
+    // eindeutigen ausländischen Angaben dürfen deshalb nicht durch remote
+    // als deutsche Stellen durchrutschen.
+    return !/\b(london|united kingdom|uk|england|scotland|wales|france|frankreich|paris|netherlands|niederlande|amsterdam|belgium|belgien|brussels|switzerland|schweiz|zurich|austria|österreich|vienna|wien|spain|spanien|madrid|italy|italien|rome|rom|usa|united states|canada|poland|polen|warsaw|warszawa)\b/i.test(locationText);
+}
+
 async function searchArbeitnow(profile) {
     const response = await fetch(ARBEITNOW_API_URL, { headers: { Accept: "application/json" } });
     if (!response.ok) throw new Error(`Arbeitnow antwortete mit HTTP ${response.status}.`);
     const payload = await response.json();
     const jobs = Array.isArray(payload.data) ? payload.data : [];
     return {
-        jobs: jobs.map(normalizeArbeitnowJob).filter(job => job.company && job.position && job.url),
+        jobs: jobs.map(normalizeArbeitnowJob).filter(job => job.company && job.position && job.url && isGermanArbeitnowJob(job)),
         rawCount: jobs.length,
         invalidCount: 0,
         detailsFetchedCount: 0,
