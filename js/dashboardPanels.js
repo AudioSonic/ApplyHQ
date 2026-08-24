@@ -16,8 +16,9 @@ const searchProfilePanel = {
     containerId: "searchProfile-list-container",
     addButtonText: "Suchprofil hinzufügen",
     addButtonId: "open-searchProfile-modal-button",
-    searchPlaceholder: "Suche nach Suchprofil...",
+    searchPlaceholder: "Suche nach Profilname, Stelle oder Standort...",
     counterId: "searchProfile-count",
     searchBarId: "searchProfile-searchbar",
     buttonId: "open-searchProfile-modal-button"
+    ,isSearchProfile: true
 };

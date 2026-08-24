@@ -132,11 +132,18 @@ function createSearchControls(config) {
 
     sortAndFilter.id = "sort-and-filter";
     sortAndFilter.append(
-        createSelectControl("application-sort", "Sortierung:", [
+        createSelectControl(config.isSearchProfile ? "searchProfile-sort" : "application-sort", "Sortierung:", config.isSearchProfile ? [
+            ["ascending", "Aufsteigend"],
+            ["descending", "Absteigend"]
+        ] : [
             ["newest", "Neueste zuerst"],
             ["oldest", "Älteste zuerst"]
         ]),
-        createSelectControl("application-filter", "Filter:", [
+        createSelectControl(config.isSearchProfile ? "searchProfile-filter" : "application-filter", "Filter:", config.isSearchProfile ? [
+            ["all", "Alle Suchprofile"],
+            ["active", "Aktiv"],
+            ["inactive", "Inaktiv"]
+        ] : [
             ["all", "Alle Bewerbungen"],
             ["new", "Neue Bewerbungen"],
             ["open", "Offen"],
