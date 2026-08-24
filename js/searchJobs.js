@@ -205,13 +205,21 @@ function evaluateJobs(profile, jobs, referenceDate) {
         .sort((first, second) => second.score - first.score);
     const newJobs = [];
     const duplicates = [];
+    const matchedBySource = {};
+    const newBySource = {};
+    const duplicateBySource = {};
 
     evaluatedJobs.forEach(job => {
+        const source = job.source || "Unbekannte Quelle";
+        matchedBySource[source] = (matchedBySource[source] || 0) + 1;
         const classification = classifySearchJob(job, referenceDate);
-        (classification.status === "new" ? newJobs : duplicates).push({ ...job, ...classification });
+        const target = classification.status === "new" ? newJobs : duplicates;
+        const sourceCounts = classification.status === "new" ? newBySource : duplicateBySource;
+        target.push({ ...job, ...classification });
+        sourceCounts[source] = (sourceCounts[source] || 0) + 1;
     });
 
-    return { newJobs, duplicates, checkedCount: jobs.filter(job => isJobNewSinceLastSearch(job, profile)).length, errors: [] };
+    return { newJobs, duplicates, checkedCount: jobs.filter(job => isJobNewSinceLastSearch(job, profile)).length, matchedBySource, newBySource, duplicateBySource, errors: [] };
 }
 
 async function fetchJobsFromBackend(profile) {
@@ -260,8 +268,20 @@ function showSearchConfirmation(modal, profile, result, searchedAt) {
         ? ` · ${result.providers.map(provider => `${provider.source}: ${provider.normalizedCount}`).join(" · ")}`
         : "";
     const partialErrors = result.errors?.length ? ` · Hinweis: ${result.errors.map(error => `${error.source}: ${error.message}`).join("; ")}` : "";
-    details.textContent = `${result.checkedCount} geprüft · ${result.duplicates.length} bereits bekannt · ${result.oldCount || 0} alte Stelle(n) übersprungen · ${result.invalidCount || 0} unvollständig übersprungen${result.detailsFetchedCount ? ` · ${result.detailsFetchedCount} Detailbeschreibungen ausgewertet` : ""}${providerStats}${partialErrors}.`;
+    const matchedStats = Object.entries(result.matchedBySource || {}).map(([source, count]) => `${source}: ${count} passend`).join(" · ");
+    details.textContent = `${result.checkedCount} geprüft · ${result.duplicates.length} bereits bekannt · ${result.oldCount || 0} alte Stelle(n) übersprungen · ${result.invalidCount || 0} unvollständig übersprungen${result.detailsFetchedCount ? ` · ${result.detailsFetchedCount} Detailbeschreibungen ausgewertet` : ""}${providerStats}${matchedStats ? ` · ${matchedStats}` : ""}${partialErrors}.`;
     summary.append(text, details);
+    if ([...(result.newJobs || []), ...(result.duplicates || [])].some(job => job.source === "Arbeitnow")) {
+        const attribution = document.createElement("p");
+        attribution.className = "search-confirmation-attribution";
+        const link = document.createElement("a");
+        link.href = "https://www.arbeitnow.com";
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "Stellendaten teilweise von Arbeitnow";
+        attribution.append(link);
+        summary.append(attribution);
+    }
     modal.content.append(summary);
 
     const confirmButton = document.createElement("button");

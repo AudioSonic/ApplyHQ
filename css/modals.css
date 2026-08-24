@@ -222,6 +222,16 @@
     font-size: 0.9rem;
 }
 
+.search-confirmation-attribution {
+    color: var(--color-text-muted, #6b7280);
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.search-confirmation-attribution a {
+    color: var(--color-primary);
+}
+
 .search-run-modal .modal-footer {
     display: flex;
     justify-content: flex-end;
