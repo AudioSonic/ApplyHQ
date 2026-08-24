@@ -96,6 +96,19 @@ test("behandelt einen leeren Radius als exakten Standort", () => {
     assert.equal(distantJob.isLocationMatch, false);
 });
 
+test("übernimmt die Stellenbeschreibung, lässt Details aber leer", () => {
+    const context = loadSearchLogic();
+    const result = context.getAutomaticApplicationData({
+        company: "Test GmbH",
+        position: "Softwareentwickler",
+        description: "<p>Entwicklung&nbsp;moderner Software</p>",
+        city: "Leipzig",
+        url: "https://example.com/job"
+    });
+    assert.equal(result.description, "Entwicklung moderner Software");
+    assert.equal(result.details, "");
+});
+
 test("akzeptiert eine passende Remote-Stelle außerhalb des Radius", () => {
     const context = loadSearchLogic();
     const result = context.evaluateSearchJob({

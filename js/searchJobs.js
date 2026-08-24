@@ -211,10 +211,27 @@ function formatSearchDate(dateValue) {
     return Number.isNaN(date.getTime()) ? "unbekannten Datum" : date.toLocaleDateString("de-DE");
 }
 
+function cleanJobDescription(value) {
+    return String(value || "")
+        .replace(/<br\s*\/?>/gi, "\n")
+        .replace(/<\/p\s*>/gi, "\n")
+        .replace(/<[^>]*>/g, "")
+        .replace(/&nbsp;/gi, " ")
+        .replace(/&amp;/gi, "&")
+        .replace(/&quot;/gi, '"')
+        .replace(/&#39;/gi, "'")
+        .replace(/[ \t]+/g, " ")
+        .replace(/\n\s*\n+/g, "\n\n")
+        .trim();
+}
+
 function getAutomaticApplicationData(job) {
     return {
         company: job.company,
         position: job.position,
+        contactName: job.contactName || job.contact || "",
+        description: cleanJobDescription(job.description),
+        details: "",
         city: job.city,
         state: job.state,
         date: "",
