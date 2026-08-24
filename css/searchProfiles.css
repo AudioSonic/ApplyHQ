@@ -90,6 +90,10 @@
     width: 140px;
 }
 
+.search-profile-buttons > .search-profile-button:not(.button-primary):hover {
+    background-color: var(--color-surface) !important;
+}
+
 .search-profile-button img {
     height: 17px;
     width: 17px;
