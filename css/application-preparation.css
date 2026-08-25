@@ -1,0 +1,6 @@
+.application-prepare-button { font-size: .8rem; padding: .45rem .7rem; }
+.application-preparation-modal { display: grid; gap: .5rem; }
+.preparation-check { margin: .15rem 0; }
+.preparation-check.is-present { color: #237a45; }
+.preparation-check.is-missing { color: #9a6700; }
+.modal-actions { display: flex; justify-content: flex-end; gap: .6rem; margin-top: .75rem; }

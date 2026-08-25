@@ -15,9 +15,7 @@ function importJSON() {
             try {
                 const data = JSON.parse(reader.result);
 
-                validateJSON(data);
-
-                applications = data;
+                applications = validateJSON(data);
                 saveApplications();
                 navigateToDashboard();
 
@@ -34,7 +32,7 @@ function importJSON() {
 }
 
 function exportJSON() {
-    const json = JSON.stringify(applications, null, 4);
+    const json = JSON.stringify({ type: "applyhq-applications", version: APPLICATION_SCHEMA_VERSION, applications }, null, 4);
     const blob = new Blob([json], {
         type: "application/json"
     });
@@ -54,11 +52,14 @@ function exportJSON() {
 
 function validateJSON(data) {
 
-    if (!Array.isArray(data)) {
+    if (Array.isArray(data)) data = { applications: data, version: 1 };
+    if (!data || !Array.isArray(data.applications)) {
         throw new Error("Die JSON-Datei enthält keine Liste von Bewerbungen.");
     }
 
-    const isValid = data.every(application => {
+    if (Number(data.version) > APPLICATION_SCHEMA_VERSION) throw new Error("Die Bewerbungsversion wird nicht unterstützt.");
+    const migrated = data.applications.map(migrateApplication);
+    const isValid = migrated.every(application => {
         return (
             typeof application.id === "number" &&
             typeof application.company === "string" &&
@@ -70,5 +71,11 @@ function validateJSON(data) {
     if (!isValid) {
         throw new Error("Die Datei besitzt ein ungültiges Format.");
     }
+
+    migrated.forEach(application => {
+        const errors = validateApplication(application);
+        if (errors.length) throw new Error(`Ungültige Bewerbung: ${errors.join(" ")}`);
+    });
+    return migrated;
 
 }

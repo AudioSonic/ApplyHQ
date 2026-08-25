@@ -14,6 +14,12 @@
 
     <title>ApplyHQ</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/application-preparation.css">
+    <link rel="stylesheet" href="css/job-analysis.css">
+    <link rel="stylesheet" href="css/profile-matching.css">
+    <link rel="stylesheet" href="css/cover-letter.css">
+    <link rel="stylesheet" href="css/application-workflow.css">
 </head>
 
 <body>
@@ -40,25 +46,13 @@
                         </a>
                     </li>
                     <li>
-                        <a class="navbar-button" href="#">
-                            <img src="assets/icons/icon_note.svg" alt="">
-                            <span>Bewerbungen</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="navbar-button" href="#">
-                            <img src="assets/icons/icon_search.svg" alt="">
-                            <span>Jobs suchen</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="navbar-button" href="#">
+                        <a class="navbar-button is-disabled" href="#" aria-disabled="true" tabindex="-1">
                             <img src="assets/icons/icon_notes.svg" alt="">
                             <span>Dokumente</span>
                         </a>
                     </li>
                     <li>
-                        <a class="navbar-button" href="#">
+                        <a class="navbar-button" href="#profile" data-view="profile" data-action="loadProfile">
                             <img src="assets/icons/icon_person.svg" alt="">
                             <span>Profil</span>
                         </a>
@@ -85,6 +79,7 @@
         <main id="app" aria-live="polite"></main>
     </div>
 
+    <script src="js/applicationModel.js"></script>
     <script src="js/applications.js"></script>
     <script src="js/applicationCards.js"></script>
     <script src="js/storage.js"></script>
@@ -99,6 +94,17 @@
     <script src="js/config.js"></script>
     <script src="js/searchJobs.js"></script>
     <script src="js/searchProfileCards.js"></script>
+    <script src="js/profileModel.js"></script>
+    <script src="js/profileRepository.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/applicationPreparation.js"></script>
+    <script src="js/aiService.js"></script>
+    <script src="js/jobAnalysisModel.js"></script>
+    <script src="js/jobAnalysisService.js"></script>
+    <script src="js/profileMatchingModel.js"></script>
+    <script src="js/profileMatchingService.js"></script>
+    <script src="js/coverLetterModel.js"></script>
+    <script src="js/coverLetterService.js"></script>
 </body>
 
 </html>

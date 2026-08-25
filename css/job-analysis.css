@@ -1,0 +1,4 @@
+.job-analysis-modal { display: grid; gap: .35rem; max-height: 70vh; overflow-y: auto; }
+.job-analysis-modal h2 { margin-bottom: .25rem; }
+.job-analysis-modal h3 { margin: .75rem 0 .1rem; }
+.job-analysis-modal ul { margin: 0; padding-left: 1.25rem; }

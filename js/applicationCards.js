@@ -97,6 +97,8 @@ function createApplicationCard(application) {
     const deleteButtonIcon = document.createElement("img");
     const editButton = document.createElement("button");
     const editButtonIcon = document.createElement("img");
+    const prepareButton = document.createElement("button");
+    const matchingIndicator = document.createElement("span");
     const details = document.createElement("div");
     const options = document.createElement("div");
     const infoSection = document.createElement("div");
@@ -161,6 +163,11 @@ function createApplicationCard(application) {
     editButton.classList.add("icon-button");
     editButtonIcon.src = "assets/icons/icon_edit.svg";
     editButtonIcon.alt = "";
+    prepareButton.type = "button";
+    prepareButton.classList.add("button", "button-primary", "application-prepare-button");
+    prepareButton.textContent = "Bewerbung erstellen";
+    prepareButton.addEventListener("click", event => { event.stopPropagation(); openApplicationPreparation(application); });
+    if (application.jobMatching && Number.isInteger(application.jobMatching.score)) { matchingIndicator.className = `matching-indicator matching-${application.jobMatching.score >= 80 ? "high" : application.jobMatching.score >= 60 ? "good" : application.jobMatching.score >= 40 ? "partial" : "low"}`; matchingIndicator.textContent = `${application.jobMatching.score} %`; matchingIndicator.title = `${application.jobMatching.rating}\nMuss-Anforderungen: ${application.jobMatching.requirements.mustHave.matched}/${application.jobMatching.requirements.mustHave.total}`; matchingIndicator.setAttribute("aria-label", `Passung ${application.jobMatching.score} Prozent`); }
 
     if(application.logo){
         logo.src = application.logo;
@@ -209,6 +216,8 @@ function createApplicationCard(application) {
     }
     options.append(deleteButton, editButton);
     details.append(status);
+    if (matchingIndicator.textContent) details.append(matchingIndicator);
+    details.append(prepareButton);
     logoFrame.append(logoVisual, favoriteButton);
     infoSection.append(logoFrame, information, options);
 

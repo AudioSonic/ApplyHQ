@@ -35,6 +35,9 @@ function handleNavigationClick(event) {
         case "loadSettings":
         loadSettings();
         break;
+        case "loadProfile":
+        loadProfile();
+        break;
     }
 }
 
@@ -98,10 +101,21 @@ function getApplicationFormData(applicationForm) {
         url: getFormValue(applicationForm, "#application-url"),
         salutation: getFormValue(applicationForm, "#application-salutation"),
         contactName: getFormValue(applicationForm, "#application-contact-name"),
+        contact: {
+            salutation: getFormValue(applicationForm, "#application-salutation"),
+            lastName: getFormValue(applicationForm, "#application-contact-name"),
+            position: getFormValue(applicationForm, "#application-contact-position")
+        },
+        companyAddress: parseCompanyAddress(getFormValue(applicationForm, "#application-company-address")),
         description: getFormValue(applicationForm, "#application-description"),
         details: getFormValue(applicationForm, "#application-details"),
         notes: getFormValue(applicationForm, "#application-notes")
     };
+}
+
+function parseCompanyAddress(value) {
+    const [street = "", houseNumber = "", postalCode = "", city = "", country = ""] = String(value || "").split(";").map(part => part.trim());
+    return { street, houseNumber, postalCode, city, country };
 }
 
 function getFormValue(applicationForm, selector) {

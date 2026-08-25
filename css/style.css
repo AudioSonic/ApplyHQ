@@ -8,3 +8,8 @@
 @import url("settings.css");
 @import url("dashboard.css");
 @import url("searchProfiles.css");
+.navbar-button.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
+}

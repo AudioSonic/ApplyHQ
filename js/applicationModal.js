@@ -41,6 +41,10 @@ function createApplicationModal(application = null){
     const contactNameColumn = document.createElement("div");
     const contactNameLabel = createLabel("application-contact-name", "Name");
     const contactNameInput = createInput("application-contact-name", "text", "z. B. Max Mustermann");
+    const contactPositionLabel = createLabel("application-contact-position", "Position der Ansprechperson");
+    const contactPositionInput = createInput("application-contact-position", "text", "z. B. Recruiting");
+    const addressLabel = createLabel("application-company-address", "Unternehmensanschrift (Straße; Hausnummer; PLZ; Ort; Land)");
+    const addressInput = createInput("application-company-address", "text", "z. B. Musterstraße; 1; 01067; Dresden; Deutschland");
     const descriptionLabel = createLabel("application-description", "Stellenbeschreibung");
     const descriptionTextarea = document.createElement("textarea");
     const applicationDetailsLabel = createLabel("application-details", "Details");
@@ -163,6 +167,10 @@ function createApplicationModal(application = null){
         infoRow,
         detailsRow,
         contactRow,
+        contactPositionLabel,
+        contactPositionInput,
+        addressLabel,
+        addressInput,
         descriptionLabel,
         descriptionTextarea,
         applicationDetailsLabel,
@@ -183,7 +191,10 @@ function createApplicationModal(application = null){
         tagSelect.value = application.tag || "junior";
         salutationSelect.value = application.salutation || "-";
         contactNameInput.value = application.contactName || application.contact || "";
-        descriptionTextarea.value = application.description || "";
+        contactPositionInput.value = application.contact?.position || "";
+        const address = application.companyAddress || {};
+        addressInput.value = [address.street, address.houseNumber, address.postalCode, address.city, address.country].join("; ").replace(/^(; )+|(; )+$/g, "");
+        descriptionTextarea.value = application.jobPosting?.rawText || application.description || "";
         applicationDetailsTextarea.value = application.details || "";
         notesTextarea.value = application.notes || "";
     }
@@ -297,7 +308,11 @@ function saveApplicationEdit(event, application){
     application.url = applicationData.url;
     application.salutation = applicationData.salutation;
     application.contactName = applicationData.contactName;
-    application.description = applicationData.description;
+    application.contact = applicationData.contact;
+    application.companyAddress = applicationData.companyAddress;
+    const rawText = applicationData.description || application.jobPosting?.rawText || "";
+    application.description = rawText;
+    application.jobPosting = createJobPosting({ ...(application.jobPosting || {}), rawText, sourceUrl: applicationData.url, updatedAt: new Date().toISOString() }, application);
     application.details = applicationData.details;
     application.notes = applicationData.notes;
 

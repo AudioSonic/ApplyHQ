@@ -1,6 +1,7 @@
 /* Speichern und laden von Daten */
 
 function saveApplications(){
+    applications = applications.map(migrateApplication);
     localStorage.setItem('applications', JSON.stringify(applications));
 }
 
@@ -14,7 +15,7 @@ function loadApplications(){
 
     try{
         const parsedApplications = JSON.parse(loadedApplications);
-        applications = Array.isArray(parsedApplications) ? parsedApplications : [];
+        applications = Array.isArray(parsedApplications) ? parsedApplications.map(migrateApplication) : [];
         applications.forEach(application => {
             application.favorite = application.favorite === true;
             if (application.url?.includes("jobboerse.arbeitsagentur.de") && application.externalId) {
@@ -27,6 +28,7 @@ function loadApplications(){
     }
 
     applicationId = getNextApplicationId();
+    saveApplications();
     renderApplications();
 }
 

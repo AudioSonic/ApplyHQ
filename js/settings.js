@@ -22,10 +22,28 @@ function renderSettings(){
     const exportIcon = document.createElement("img");
     const importText = document.createElement("span");
     const exportText = document.createElement("span");
+    const aiButton = document.createElement("button");
+    const aiResult = document.createElement("p");
 
     headerText.textContent="Einstellungen";
     importText.textContent = "Daten importieren";
     exportText.textContent = "Daten exportieren";
+    aiButton.textContent = "KI-Verbindung testen";
+    aiButton.className = "button settings-button";
+    aiButton.type = "button";
+    aiResult.className = "settings-ai-result";
+    aiResult.hidden = true;
+    aiButton.addEventListener("click", async () => {
+        aiButton.disabled = true;
+        aiResult.hidden = false;
+        aiResult.textContent = "Verbindung wird getestet …";
+        try {
+            const result = await testAiConnection("Antworte mit einem kurzen Satz auf Deutsch.");
+            aiResult.textContent = `Verbunden (${result.model}): ${result.output}`;
+        } catch (error) {
+            aiResult.textContent = `Fehler: ${error.message}`;
+        } finally { aiButton.disabled = false; }
+    });
     subTitle.textContent = "Dokumentenverwaltung";
     description.textContent = "Importiere oder exportiere deine Bewerbungsdaten.";
     importIcon.src = "assets/icons/icon_download.svg";
@@ -45,7 +63,7 @@ function renderSettings(){
     importButton.append(importText, importIcon);
     exportButton.append(exportText, exportIcon);
 
-    buttonSection.append(importButton, exportButton);
+    buttonSection.append(importButton, exportButton, aiButton, aiResult);
     settingSection.append(headerText, hr, subTitle, description, buttonSection);
 
     return settingSection;

@@ -6,6 +6,9 @@ const rateLimitBuckets = new Map();
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 10;
 const MAX_DETAIL_REQUESTS = 25;
+const DEFAULT_OPENAI_MODEL = "gpt-5.6-luna";
+const AI_MAX_INPUT_LENGTH = 4000;
+const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
 
 function jsonResponse(body, status = 200, origin = ALLOWED_ORIGIN) {
     return new Response(JSON.stringify(body), {
@@ -253,6 +256,210 @@ function normalizeArbeitnowJob(job) {
     };
 }
 
+function isAiRateLimited(request) {
+    return isRateLimited(request);
+}
+
+function validateAiTestRequest(payload) {
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) return "Ein JSON-Objekt ist erforderlich.";
+    if (typeof payload.input !== "string" || !payload.input.trim()) return "Das Feld input ist erforderlich.";
+    if (payload.input.length > AI_MAX_INPUT_LENGTH) return `input darf höchstens ${AI_MAX_INPUT_LENGTH} Zeichen enthalten.`;
+    return "";
+}
+
+function getOpenAiModel(env) {
+    return normalizeText(env.OPENAI_MODEL) || DEFAULT_OPENAI_MODEL;
+}
+
+function extractOpenAiText(payload) {
+    if (typeof payload?.output_text === "string") return payload.output_text;
+    return (payload?.output || []).flatMap(item => item.content || []).filter(item => item.type === "output_text").map(item => item.text).join("\n");
+}
+
+function createOpenAiProvider(env, fetcher = fetch) {
+    return {
+        name: "openai",
+        model: getOpenAiModel(env),
+        async generate(input, outputSchema, instructions = "") {
+            if (!env.OPENAI_API_KEY) return { error: "missing_key" };
+            outputSchema = outputSchema || { name: "ai_test_response", schema: { type: "object", properties: { answer: { type: "string" } }, required: ["answer"], additionalProperties: false } };
+            const response = await fetcher(OPENAI_RESPONSES_URL, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: getOpenAiModel(env),
+                    store: false,
+                    max_output_tokens: outputSchema.name === "ai_test_response" ? 120 : 2500,
+                    ...(outputSchema.name === "ai_test_response" ? {} : { reasoning: { effort: "none" } }),
+                    input: [{ role: "user", content: [{ type: "input_text", text: `${instructions}\n\n${input}` }] }],
+                    text: { format: { type: "json_schema", name: outputSchema.name, strict: true, schema: outputSchema.schema } }
+                })
+            });
+            if (!response.ok) return { error: response.status === 401 || response.status === 403 ? "auth" : response.status === 429 ? "rate_limit" : "provider", status: response.status };
+            const data = await response.json();
+            const text = extractOpenAiText(data);
+            try {
+                const parsed = JSON.parse(text);
+                return { answer: outputSchema.name === "ai_test_response" ? parsed.answer : text };
+            } catch { return { error: "invalid_output" }; }
+        }
+    };
+}
+
+function jobAnalysisOutputSchema() {
+    const stringArray = { type: "array", items: { type: "string" } };
+    const nullableBoolean = { type: ["boolean", "null"] };
+    const skill = { type: "object", properties: { name: { type: "string" }, category: { type: "string" } }, required: ["name", "category"], additionalProperties: false };
+    const object = (properties, required = Object.keys(properties)) => ({ type: "object", properties, required, additionalProperties: false });
+    const schema = object({
+        version: { type: "integer" }, analyzedAt: { type: "string" },
+        position: object({ title: { type: "string" }, seniority: { type: "string" }, employmentType: { type: "string" } }),
+        company: object({ name: { type: "string" } }), tasks: stringArray,
+        requirements: object({ mustHave: stringArray, niceToHave: stringArray }),
+        skills: object({ programmingLanguages: { type: "array", items: skill }, frontend: { type: "array", items: skill }, backend: { type: "array", items: skill }, frameworks: { type: "array", items: skill }, databases: { type: "array", items: skill }, tools: { type: "array", items: skill }, methods: { type: "array", items: skill } }),
+        softSkills: stringArray,
+        experience: object({ requiredYears: { type: ["integer", "null"] }, preferredYears: { type: ["integer", "null"] }, required: { type: "string" }, preferred: { type: "string" } }),
+        education: stringArray, languages: { type: "array", items: object({ language: { type: "string" }, level: { type: "string" }, required: { type: "boolean" } }) },
+        workModel: object({ remote: nullableBoolean, hybrid: nullableBoolean, onsite: nullableBoolean }),
+        location: object({ city: { type: "string" }, region: { type: "string" } }),
+        salary: object({ mentioned: { type: "boolean" }, text: { type: ["string", "null"] }, source: { type: ["string", "null"] } }),
+        travel: object({ required: nullableBoolean, description: { type: "string" } }), benefits: stringArray, additionalRequirements: stringArray, summary: { type: "string" }
+    });
+    return { name: "job_analysis", schema };
+}
+
+function validateJobAnalysisResponse(analysis) {
+    if (!analysis || typeof analysis !== "object" || analysis.version !== 1) return "Analyse besitzt keine gültige Version.";
+    if (!analysis.position || typeof analysis.position.title !== "string") return "Analyseposition fehlt.";
+    if (!analysis.requirements || !Array.isArray(analysis.requirements.mustHave) || !Array.isArray(analysis.requirements.niceToHave)) return "Anforderungsstruktur fehlt.";
+    if (!analysis.skills || ["programmingLanguages", "frontend", "backend", "frameworks", "databases", "tools", "methods"].some(key => !Array.isArray(analysis.skills[key]))) return "Skillsstruktur fehlt.";
+    return "";
+}
+
+function validateJobAnalysisRequest(payload) {
+    if (!payload || typeof payload !== "object" || Array.isArray(payload)) return "Ein JSON-Objekt ist erforderlich.";
+    if (typeof payload.rawText !== "string" || !payload.rawText.trim()) return "rawText ist erforderlich.";
+    if (payload.rawText.length > 50000) return "rawText ist zu groß.";
+    if (payload.details !== undefined && typeof payload.details !== "string") return "details muss Text sein.";
+    if ((payload.details || "").length > 5000) return "details ist zu groß.";
+    return "";
+}
+
+function profileMatchingOutputSchema() {
+    const object = (properties, required = Object.keys(properties)) => ({ type: "object", properties, required, additionalProperties: false });
+    const status = { type: "string", enum: ["matched", "partial", "missing", "unclear", "contradicted"] };
+    const item = object({ requirement: { type: "string" }, status, profileEvidence: { type: "array", items: { type: "string" } } });
+    const area = object({ status, rating: { type: "string" }, explanation: { type: "string" } });
+    const schema = object({ version: { type: "integer" }, score: { type: "null" }, rating: { type: "string" }, requirements: object({ mustHave: object({ matched: { type: "integer" }, total: { type: "integer" }, items: { type: "array", items: item } }), niceToHave: object({ matched: { type: "integer" }, total: { type: "integer" }, items: { type: "array", items: item } }) }), skills: object({ matched: { type: "array", items: { type: "string" } }, partial: { type: "array", items: { type: "string" } }, missing: { type: "array", items: { type: "string" } } }), experience: area, education: area, projects: object({ status, rating: { type: "string" }, explanation: { type: "string" }, relevant: { type: "array", items: object({ projectId: { type: "string" }, relevance: { type: "string", enum: ["high", "medium", "low"] }, reasons: { type: "array", items: { type: "string" } } }) } }), softSkills: area, languages: area, missing: { type: "array", items: { type: "string" } }, strengths: { type: "array", items: { type: "string" } }, summary: { type: "string" }, matchedAt: { type: "string" } });
+    return { name: "profile_matching", schema };
+}
+
+function validateProfileMatchingResponse(matching, profile) {
+    if (!matching || matching.version !== 1 || matching.score !== null) return "Matching muss versioniert sein und darf keinen KI-Score enthalten.";
+    if (!matching.requirements?.mustHave || !matching.requirements?.niceToHave) return "Anforderungsmatches fehlen.";
+    const references = new Map();
+    const addReference = item => { if (!item || !item.id) return; references.set(String(item.id), String(item.id)); if (item.name) references.set(String(item.name).trim().toLocaleLowerCase("de-DE"), String(item.id)); if (item.title) references.set(String(item.title).trim().toLocaleLowerCase("de-DE"), String(item.id)); };
+    if (profile.skills) Object.values(profile.skills).flat().forEach(addReference);
+    (profile.experience || []).forEach(addReference); (profile.education || []).forEach(addReference); (profile.projects || []).forEach(addReference);
+    const ids = new Set(references.values());
+    const normalizeReference = value => references.get(String(value || "").trim()) || references.get(String(value || "").trim().toLocaleLowerCase("de-DE")) || value;
+    [...(matching.requirements.mustHave.items || []), ...(matching.requirements.niceToHave.items || [])].forEach(item => { item.profileEvidence = (item.profileEvidence || []).map(normalizeReference); });
+    (matching.projects?.relevant || []).forEach(item => { item.projectId = normalizeReference(item.projectId); });
+    const evidence = [...(matching.requirements.mustHave.items || []), ...(matching.requirements.niceToHave.items || [])].flatMap(item => item.profileEvidence || []);
+    const projectIds = (matching.projects?.relevant || []).map(item => item.projectId);
+    if ([...evidence, ...projectIds].some(id => !ids.has(id))) return "Matching enthält unbekannte Profilreferenzen.";
+    return "";
+}
+
+async function handleProfileMatching(request, env, origin, fetcher = fetch) {
+    if (request.method !== "POST") return jsonResponse({ error: "Nur POST wird unterstützt." }, 405, origin);
+    if (!request.headers.get("Content-Type")?.toLowerCase().includes("application/json")) return jsonResponse({ error: "Content-Type application/json ist erforderlich." }, 415, origin);
+    if (isAiRateLimited(request)) return jsonResponse({ error: "Zu viele KI-Anfragen. Bitte später erneut versuchen." }, 429, origin);
+    let payload; try { payload = await request.json(); } catch { return jsonResponse({ error: "Ungültiges JSON." }, 400, origin); }
+    if (!payload?.jobAnalysis || !payload?.profile) return jsonResponse({ error: "jobAnalysis und profile sind erforderlich." }, 400, origin);
+    const input = `JobAnalysis:\n${JSON.stringify(payload.jobAnalysis)}\n\nBewerberprofil:\n${JSON.stringify(payload.profile)}`;
+    const provider = createOpenAiProvider(env, fetcher);
+    const result = await provider.generate(input, profileMatchingOutputSchema(), "Vergleiche ausschließlich JobAnalysis und Bewerberprofil. Erfinde keine Kenntnisse. Verwende in profileEvidence und projectId ausschließlich die exakten id-Werte aus dem Bewerberprofil, niemals Anzeigenamen oder neue IDs. Setze score immer auf null; ApplyHQ berechnet ihn selbst. Verwende matched nur bei konkreter Profilevidenz, partial bei teilweiser Evidenz, unclear wenn die Information im Profil nicht ausreichend belegt ist, und contradicted ausschließlich bei einer ausdrücklichen negativen Profilangabe. Das bloße Fehlen eines Skills, Soft Skills oder einer Sprache ist niemals contradicted.");
+    if (result.error === "missing_key") return jsonResponse({ error: "KI-Service ist serverseitig nicht konfiguriert." }, 503, origin);
+    if (result.error) return jsonResponse({ error: "Das Profil konnte nicht gematcht werden." }, 502, origin);
+    let matching; try { matching = JSON.parse(result.answer); } catch { return jsonResponse({ error: "Die KI lieferte kein gültiges Matching." }, 502, origin); }
+    const outputError = validateProfileMatchingResponse(matching, payload.profile);
+    if (outputError) return jsonResponse({ error: outputError }, 502, origin);
+    return jsonResponse({ success: true, provider: provider.name, model: provider.model, matching }, 200, origin);
+}
+
+function coverLetterOutputSchema() {
+    const stringArray = { type: "array", items: { type: "string" } };
+    const schema = { type: "object", properties: { version: { type: "integer" }, generatedAt: { type: "string" }, subject: { type: "string" }, greeting: { type: "string" }, opening: { type: "string" }, body: stringArray, motivation: { type: "string" }, closing: { type: "string" }, signature: { type: "string" } }, required: ["version", "generatedAt", "subject", "greeting", "opening", "body", "motivation", "closing", "signature"], additionalProperties: false };
+    return { name: "cover_letter", schema };
+}
+
+function validateCoverLetterResponse(letter) {
+    if (!letter || letter.version !== 1) return "Anschreiben besitzt keine gültige Version.";
+    for (const key of ["subject", "greeting", "opening", "motivation", "closing", "signature"]) if (typeof letter[key] !== "string" || !letter[key].trim()) return `Anschreiben.${key} fehlt.`;
+    if (!Array.isArray(letter.body) || !letter.body.length || letter.body.some(item => typeof item !== "string" || !item.trim())) return "Anschreiben.body ist ungültig.";
+    return "";
+}
+
+async function handleCoverLetter(request, env, origin, fetcher = fetch) {
+    if (request.method !== "POST") return jsonResponse({ error: "Nur POST wird unterstützt." }, 405, origin);
+    if (!request.headers.get("Content-Type")?.toLowerCase().includes("application/json")) return jsonResponse({ error: "Content-Type application/json ist erforderlich." }, 415, origin);
+    if (isAiRateLimited(request)) return jsonResponse({ error: "Zu viele KI-Anfragen. Bitte später erneut versuchen." }, 429, origin);
+    let payload; try { payload = await request.json(); } catch { return jsonResponse({ error: "Ungültiges JSON." }, 400, origin); }
+    if (!payload?.jobAnalysis || !payload?.jobMatching || !payload?.profile) return jsonResponse({ error: "jobAnalysis, jobMatching und profile sind erforderlich." }, 400, origin);
+    const input = `JobAnalysis:\n${JSON.stringify(payload.jobAnalysis)}\n\nJobMatching:\n${JSON.stringify(payload.jobMatching)}\n\nBewerberprofil:\n${JSON.stringify(payload.profile)}\n\nUnternehmen:\n${JSON.stringify(payload.company || {})}\n\nAnsprechpartner:\n${JSON.stringify(payload.contact || {})}`;
+    const provider = createOpenAiProvider(env, fetcher);
+    const result = await provider.generate(input, coverLetterOutputSchema(), "Erstelle ein individuelles deutsches Anschreiben. Verwende ausschließlich belegte Profilinformationen. matched darf konkret verwendet werden, partial nur vorsichtig, unclear und contradicted niemals als vorhandene Qualifikation. Verwende nur relevante Projekte aus dem Profil. Erfinde keine Technologien, Tätigkeiten, Erfolge, Zahlen, Motivation oder Unternehmensfakten. Wenn kein Ansprechpartnername vorhanden ist, nutze 'Sehr geehrte Damen und Herren,'. Vermeide generische KI-Floskeln. Zielumfang etwa 250 bis 400 Wörter. Signatur nicht mit persönlichen Daten erfinden; verwende einen neutralen Platzhalter wie '[Name]'.");
+    if (result.error === "missing_key") return jsonResponse({ error: "KI-Service ist serverseitig nicht konfiguriert." }, 503, origin);
+    if (result.error) return jsonResponse({ error: "Das Anschreiben konnte nicht generiert werden." }, 502, origin);
+    let letter; try { letter = JSON.parse(result.answer); } catch { return jsonResponse({ error: "Die KI lieferte kein gültiges Anschreiben." }, 502, origin); }
+    const validationError = validateCoverLetterResponse(letter); if (validationError) return jsonResponse({ error: validationError }, 502, origin);
+    letter.generatedAt = new Date().toISOString();
+    return jsonResponse({ success: true, provider: provider.name, model: provider.model, coverLetter: letter }, 200, origin);
+}
+
+async function handleJobAnalysis(request, env, origin, fetcher = fetch) {
+    if (request.method !== "POST") return jsonResponse({ error: "Nur POST wird unterstützt." }, 405, origin);
+    if (!request.headers.get("Content-Type")?.toLowerCase().includes("application/json")) return jsonResponse({ error: "Content-Type application/json ist erforderlich." }, 415, origin);
+    if (isAiRateLimited(request)) return jsonResponse({ error: "Zu viele KI-Anfragen. Bitte später erneut versuchen." }, 429, origin);
+    let payload; try { payload = await request.json(); } catch { return jsonResponse({ error: "Ungültiges JSON." }, 400, origin); }
+    const validationError = validateJobAnalysisRequest(payload);
+    if (validationError) return jsonResponse({ error: validationError }, 400, origin);
+    const input = `Stellenanzeige (Originaltext):\n${payload.rawText}\n\nZusätzliche Stellendetails (separate Quelle, nur verwenden wenn vorhanden):\n${payload.details || "Keine zusätzlichen Details."}`;
+    const provider = createOpenAiProvider(env, fetcher);
+    const result = await provider.generate(input, jobAnalysisOutputSchema(), "Analysiere ausschließlich die bereitgestellten Quellen. Erfinde nichts. Trenne Muss-Anforderungen und wünschenswerte Anforderungen. Wenn etwas nicht genannt wird, verwende leere Werte oder null. Speichere salary.source als jobPosting oder details.");
+    if (result.error === "missing_key") return jsonResponse({ error: "KI-Service ist serverseitig nicht konfiguriert." }, 503, origin);
+    if (result.error === "rate_limit") return jsonResponse({ error: "Der KI-Anbieter meldet ein Rate-Limit." }, 429, origin);
+    if (result.error === "provider") { console.log(JSON.stringify({ event: "job_analysis_provider_error", status: result.status || 0 })); return jsonResponse({ error: "Der KI-Anbieter konnte die Analyse nicht verarbeiten.", providerStatus: result.status || null }, 502, origin); }
+    if (result.error) return jsonResponse({ error: "Die Stellenanzeige konnte nicht analysiert werden." }, 502, origin);
+    let analysis; try { analysis = JSON.parse(result.answer); } catch { return jsonResponse({ error: "Die KI lieferte keine gültige Analyse." }, 502, origin); }
+    const outputError = validateJobAnalysisResponse(analysis);
+    if (outputError) return jsonResponse({ error: outputError }, 502, origin);
+    analysis.analyzedAt = new Date().toISOString();
+    return jsonResponse({ success: true, provider: provider.name, model: provider.model, analysis }, 200, origin);
+}
+
+async function handleAiTest(request, env, origin, fetcher = fetch) {
+    if (request.method !== "POST") return jsonResponse({ error: "Nur POST wird unterstützt." }, 405, origin);
+    if (!request.headers.get("Content-Type")?.toLowerCase().includes("application/json")) return jsonResponse({ error: "Content-Type application/json ist erforderlich." }, 415, origin);
+    if (isAiRateLimited(request)) return jsonResponse({ error: "Zu viele KI-Anfragen. Bitte später erneut versuchen." }, 429, origin);
+    let payload;
+    try { payload = await request.json(); } catch { return jsonResponse({ error: "Ungültiges JSON." }, 400, origin); }
+    const validationError = validateAiTestRequest(payload);
+    if (validationError) return jsonResponse({ error: validationError }, 400, origin);
+    const provider = createOpenAiProvider(env, fetcher);
+    const startedAt = Date.now();
+    const result = await provider.generate(payload.input.trim());
+    // Log only operational metadata; never log input, prompts, output or secrets.
+    console.log(JSON.stringify({ event: result.error ? "ai_request_failed" : "ai_request_completed", provider: provider.name, status: result.status || 200, durationMs: Date.now() - startedAt }));
+    if (result.error === "missing_key") return jsonResponse({ error: "KI-Service ist serverseitig nicht konfiguriert." }, 503, origin);
+    if (result.error === "auth") return jsonResponse({ error: "KI-Service konnte sich nicht authentifizieren." }, 502, origin);
+    if (result.error === "rate_limit") return jsonResponse({ error: "Der KI-Anbieter meldet ein Rate-Limit." }, 429, origin);
+    if (result.error === "invalid_output") return jsonResponse({ error: "Der KI-Anbieter lieferte keine gültige strukturierte Antwort." }, 502, origin);
+    if (result.error) return jsonResponse({ error: "Der KI-Service ist momentan nicht verfügbar." }, 502, origin);
+    return jsonResponse({ success: true, provider: provider.name, model: provider.model, output: result.answer }, 200, origin);
+}
+
 function isGermanArbeitnowJob(job) {
     const country = normalizeText(job.country || job.land || job.country_code || job.countryCode);
     const location = normalizeText(job.location);
@@ -301,6 +508,12 @@ export default {
                 }
             });
         }
+
+        const requestUrl = new URL(request.url);
+        if (requestUrl.pathname === "/api/ai/test") return handleAiTest(request, env, origin);
+        if (requestUrl.pathname === "/api/ai/job-analysis") return handleJobAnalysis(request, env, origin);
+        if (requestUrl.pathname === "/api/ai/profile-matching") return handleProfileMatching(request, env, origin);
+        if (requestUrl.pathname === "/api/ai/cover-letter") return handleCoverLetter(request, env, origin);
 
         if (request.method !== "POST") {
             return jsonResponse({ error: "Nur POST wird unterstützt." }, 405, origin);

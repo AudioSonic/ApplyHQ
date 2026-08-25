@@ -3,7 +3,7 @@ let applications = [];
 let applicationId = 0;
 
 function addApplication(applicationData){
-    const application = {
+    const application = migrateApplication({
         id: applicationId,
         company: applicationData.company,
         position: applicationData.position,
@@ -22,8 +22,11 @@ function addApplication(applicationData){
         source: applicationData.source || "",
         publishedAt: applicationData.publishedAt || "",
         favorite: Boolean(applicationData.favorite),
-        logo: null
-    };
+        logo: null,
+        companyAddress: applicationData.companyAddress,
+        contact: applicationData.contact,
+        jobPosting: applicationData.jobPosting
+    });
 
     applications.push(application);
 
@@ -66,5 +69,12 @@ function sortApplications(applicationList, order){
 
 function getApplicationById(id){
     return applications.find(application => application.id === id);
+}
+
+function updateApplication(application, data) {
+    Object.assign(application, migrateApplication({ ...application, ...data }));
+    saveApplications();
+    renderApplications();
+    return application;
 }
 
