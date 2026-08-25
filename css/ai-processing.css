@@ -1,0 +1,5 @@
+.ai-processing-modal .modal { max-width: 28rem; text-align: center; }
+.ai-processing-content { padding: 2.5rem 1.5rem; }
+.ai-processing-content h3 { margin: 1.25rem 0 .5rem; }
+.ai-processing-content p { color: var(--color-text-muted, #64748b); min-height: 1.5rem; }
+.ai-processing-modal .search-run-spinner { margin: 0 auto; }
