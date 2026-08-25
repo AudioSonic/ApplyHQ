@@ -15,7 +15,7 @@ function createJobPosting(data = {}, legacy = {}) {
 
 function normalizeContact(application = {}) {
     const contact = application.contact && typeof application.contact === "object" ? application.contact : {};
-    const legacyName = application.contactName || application.contact || "";
+    const legacyName = typeof application.contactName === "string" ? application.contactName : "";
     return {
         salutation: contact.salutation || application.salutation || "",
         firstName: contact.firstName || "",

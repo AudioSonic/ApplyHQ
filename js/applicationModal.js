@@ -190,7 +190,7 @@ function createApplicationModal(application = null){
         urlInput.value = application.url || "";
         tagSelect.value = application.tag || "junior";
         salutationSelect.value = application.salutation || "-";
-        contactNameInput.value = application.contactName || application.contact || "";
+        contactNameInput.value = typeof application.contactName === "string" ? application.contactName : [application.contact?.firstName, application.contact?.lastName].filter(Boolean).join(" ");
         contactPositionInput.value = application.contact?.position || "";
         const address = application.companyAddress || {};
         addressInput.value = [address.street, address.houseNumber, address.postalCode, address.city, address.country].join("; ").replace(/^(; )+|(; )+$/g, "");
@@ -221,7 +221,7 @@ function openApplicationDetailsModal(application){
     modal.title.textContent = application.position || "Stellenanzeige";
     date.textContent = `Bewerbungsdatum: ${formatApplicationDate(application.date)}`;
     contactLabel.textContent = "Ansprechperson";
-    const contactParts = [application.salutation, application.contactName || application.contact]
+    const contactParts = [application.salutation, typeof application.contactName === "string" ? application.contactName : [application.contact?.firstName, application.contact?.lastName].filter(Boolean).join(" ")]
         .filter(value => value && value !== "-");
     contact.textContent = contactParts.join(" ") || "Keine Ansprechperson angegeben";
     descriptionLabel.textContent = "Stellenbeschreibung";
