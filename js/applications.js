@@ -72,9 +72,13 @@ function getApplicationById(id){
 }
 
 function updateApplication(application, data) {
-    Object.assign(application, migrateApplication({ ...application, ...data }));
+    const applicationId = application?.id;
+    const current = applications.find(item => String(item.id) === String(applicationId)) || application;
+    Object.assign(current, migrateApplication({ ...current, ...data }));
     saveApplications();
     renderApplications();
-    return application;
+    const persisted = applications.find(item => String(item.id) === String(applicationId)) || current;
+    if (application && persisted !== application) Object.assign(application, persisted);
+    return application || persisted;
 }
 
