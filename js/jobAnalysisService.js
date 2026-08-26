@@ -7,5 +7,7 @@ async function analyzeJobPosting(application, fetcher = fetch) {
     if (!response.ok) throw new Error(payload.error || `Analyse-Service antwortete mit HTTP ${response.status}.`);
     if (!payload.success || !payload.analysis) throw new Error("Der Analyse-Service lieferte keine Analyse.");
     assertValidJobAnalysis(payload.analysis);
-    return payload.analysis;
+    return deduplicateJobAnalysis(payload.analysis);
 }
+
+function deduplicateJobAnalysis(analysis) { const unique = values => { const seen = new Set(); return (values || []).filter(value => { const key = typeof value === "string" ? value.trim().toLocaleLowerCase("de-DE") : JSON.stringify(value); if (seen.has(key)) return false; seen.add(key); return true; }); }; return { ...analysis, tasks: unique(analysis.tasks), softSkills: unique(analysis.softSkills), education: unique(analysis.education), languages: unique(analysis.languages), benefits: unique(analysis.benefits), additionalRequirements: unique(analysis.additionalRequirements), requirements: { ...analysis.requirements, mustHave: unique(analysis.requirements.mustHave), niceToHave: unique(analysis.requirements.niceToHave) }, skills: Object.fromEntries(Object.entries(analysis.skills).map(([category, values]) => [category, unique(values)])) }; }

@@ -15,12 +15,13 @@ function createJobPosting(data = {}, legacy = {}) {
 
 function normalizeContact(application = {}) {
     const contact = application.contact && typeof application.contact === "object" ? application.contact : {};
-    const legacyName = typeof application.contactName === "string" ? application.contactName : "";
+    const clean = value => { const text = typeof value === "string" ? value.trim() : ""; return text === "[object Object]" ? "" : text; };
+    const legacyName = clean(application.contactName);
     return {
-        salutation: contact.salutation || application.salutation || "",
-        firstName: contact.firstName || "",
-        lastName: contact.lastName || (!contact.firstName ? legacyName : ""),
-        position: contact.position || ""
+        salutation: clean(contact.salutation) || clean(application.salutation),
+        firstName: clean(contact.firstName),
+        lastName: clean(contact.lastName) || (!clean(contact.firstName) ? legacyName : ""),
+        position: clean(contact.position)
     };
 }
 

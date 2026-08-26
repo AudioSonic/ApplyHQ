@@ -27,6 +27,15 @@ test("strukturiert Kontakt und Unternehmensanschrift", () => {
     assert.equal(context.validateApplication(application).length, 0);
 });
 
+test("bereinigt Objektwerte im Ansprechpartnerfeld ohne gültige Namen zu verändern", () => {
+    const context = loadModel();
+    const empty = context.migrateApplication({ id: 1, company: "Test", position: "Entwickler", contact: { lastName: { value: "fehler" } }, contactName: { value: "fehler" } });
+    assert.equal(empty.contactName, "");
+    assert.notEqual(empty.contactName, "[object Object]");
+    const valid = context.migrateApplication({ id: 2, company: "Test", position: "Entwickler", contact: { salutation: "Herr", lastName: "Muster" } });
+    assert.equal(valid.contactName, "Muster");
+});
+
 test("Bewerbungskontext enthält Details, aber keine persönlichen Notizen", () => {
     const context = loadModel();
     const application = context.migrateApplication({ id: 1, company: "Test GmbH", position: "Entwickler", status: "open", details: "Hybrid möglich", notes: "Nicht an KI senden" });
