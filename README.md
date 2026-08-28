@@ -1,6 +1,7 @@
 # ApplyHQ
 
-<img width="1892" height="931" alt="ApplyHQ" src="https://github.com/user-attachments/assets/25500df4-a650-46fb-a34f-46284b419015" />
+<img width="1895" height="929" alt="grafik" src="https://github.com/user-attachments/assets/8d21b32d-aa32-4dbe-97dc-75013b2ec0ba" />
+
 
 ## Projektübersicht
 
