@@ -1,6 +1,7 @@
 # ApplyHQ
 
-<img width="1892" height="931" alt="ApplyHQ" src="https://github.com/user-attachments/assets/25500df4-a650-46fb-a34f-46284b419015" />
+<img width="1895" height="929" alt="grafik" src="https://github.com/user-attachments/assets/8d21b32d-aa32-4dbe-97dc-75013b2ec0ba" />
+
 
 ## Projektübersicht
 
@@ -145,3 +146,56 @@ Anschreiben
 Qualitätsprüfung / Überarbeitung
     ↓
 PDF-Export
+
+```
+
+## Projektentwicklung mit KI-Unterstützung
+
+ApplyHQ ist auch ein praktisches Beispiel für den Einsatz moderner KI-Werkzeuge in der Softwareentwicklung.
+
+Ein großer Teil der Implementierungsarbeit der neueren Funktionen wurde mit Unterstützung von OpenAI Codex umgesetzt. Dabei lag mein Schwerpunkt insbesondere auf:
+
+Konzeption und Planung neuer Funktionen
+Definition von Anforderungen und Workflows
+Architekturentscheidungen
+Entwicklung der Datenmodelle und Verarbeitungskonzepte
+Formulierung und Präzisierung von Entwicklungsaufgaben
+Überprüfung der generierten Implementierungen
+Fehleranalyse und Debugging
+Durchführung und Erweiterung von Regressionstests
+Qualitätssicherung
+Iterativer Weiterentwicklung und Refactoring
+
+Codex wurde dabei als Entwicklungswerkzeug und Coding-Assistent eingesetzt. Die technische Umsetzung wurde anschließend anhand definierter Anforderungen überprüft, getestet und iterativ angepasst.
+
+Dadurch dient ApplyHQ nicht nur als Softwareprojekt, sondern auch als praktisches Beispiel dafür, wie KI-gestützte Entwicklungswerkzeuge in einen strukturierten Softwareentwicklungsprozess integriert werden können.
+
+## Ziel des Projekts
+
+ApplyHQ entstand ursprünglich aus einem konkreten persönlichen Problem während meiner Jobsuche.
+
+Ich wollte nicht länger Stellenanzeigen, Bewerbungen, Ansprechpartner, Dokumente und den aktuellen Bewerbungsstatus über verschiedene Anwendungen und Dateien hinweg verwalten müssen. Daraus entstand die Idee einer zentralen Anwendung, die den gesamten Bewerbungsprozess unterstützt und möglichst viele wiederkehrende Aufgaben automatisiert.
+
+Anstatt einzelne Tutorials nachzubauen, verfolge ich einen projektbasierten Lernansatz. Neue Technologien und Konzepte werden direkt anhand konkreter Anforderungen umgesetzt und anschließend in das bestehende System integriert.
+
+Dadurch entwickelt sich ApplyHQ kontinuierlich weiter und dient gleichzeitig als persönliches Werkzeug, Lernprojekt und Portfolio-Projekt.
+
+## Qualitätssicherung
+
+Da ApplyHQ kontinuierlich erweitert wird, besitzt das Projekt eine wachsende automatisierte Testabdeckung.
+
+Getestet werden unter anderem:
+
+Datenmodelle
+Datenvalidierung
+Persistenz
+Migration bestehender Daten
+KI-Workflows
+Matching
+Anschriftenerstellung
+PDF-Erzeugung
+Unicode- und Sonderzeichenverarbeitung
+PDF-Text-Extraktion
+Regressionen bei bestehenden Funktionen
+
+Besonderes Augenmerk liegt auf der Persistenz der KI-Ergebnisse und darauf, dass Änderungen auch nach einem erneuten Laden der Anwendung erhalten bleiben.
