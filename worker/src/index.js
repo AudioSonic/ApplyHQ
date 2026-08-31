@@ -409,7 +409,98 @@ async function handleCoverLetter(request, env, origin, fetcher = fetch) {
     if (!payload?.jobAnalysis || !payload?.jobMatching || !payload?.profile) return jsonResponse({ error: "jobAnalysis, jobMatching und profile sind erforderlich." }, 400, origin);
     const input = `JobAnalysis:\n${JSON.stringify(payload.jobAnalysis)}\n\nJobMatching:\n${JSON.stringify(payload.jobMatching)}\n\nBewerberprofil:\n${JSON.stringify(payload.profile)}\n\nUnternehmen:\n${JSON.stringify(payload.company || {})}\n\nAnsprechpartner:\n${JSON.stringify(payload.contact || {})}`;
     const provider = createOpenAiProvider(env, fetcher);
-    const result = await provider.generate(input, coverLetterOutputSchema(), "Erstelle ein individuelles deutsches Anschreiben mit dieser verbindlichen inhaltlichen Priorität: 1. Warum dieses Unternehmen? Leite einen konkreten, glaubwürdigen Grund ausschließlich aus den tatsächlich genannten Aufgaben, Produkten, Technologien, Arbeitsweisen, Angeboten oder anderen Fakten der Stellenanzeige ab; erfinde keine Unternehmensmotivation. 2. Warum diese konkrete Stelle? Verknüpfe die Position und ihre wichtigsten Aufgaben mit dem Bewerber. 3. Warum passe ich grundsätzlich? Formuliere eine kurze Gesamtpassung. 4. Verwende nur 2 bis 3 besonders relevante Profilbelege, statt den Lebenslauf oder die Projektliste aufzuzählen. 5. Wenn im Profil eine persönliche Homepage vorhanden ist, verweise am Ende natürlich darauf und übernimm die URL ausschließlich aus profile.homepage; erfinde niemals eine URL. Verwende ausschließlich belegte Profilinformationen. matched darf konkret verwendet werden, partial nur vorsichtig, unclear und contradicted niemals als vorhandene Qualifikation. Verwende nur relevante Projekte aus dem Profil. Erfinde keine Technologien, Tätigkeiten, Erfolge, Zahlen, Motivation oder Unternehmensfakten. Fehlende Kenntnisse gehören nicht als Negativliste in das Anschreiben. Wenn kein Ansprechpartnername vorhanden ist, nutze 'Sehr geehrte Damen und Herren,'. Vermeide generische KI-Floskeln. Zielumfang etwa 250 bis 400 Wörter. Signatur nicht mit persönlichen Daten erfinden; verwende einen neutralen Platzhalter wie '[Name]'.");
+    const result = await provider.generate(input, coverLetterOutputSchema(), `Erstelle ein individuelles deutsches Anschreiben für die konkrete Stellenanzeige.
+
+Das Anschreiben soll nicht den Lebenslauf wiederholen, sondern vor allem nachvollziehbar machen, warum der Bewerber genau diese Stelle bei genau diesem Unternehmen anstrebt.
+
+Verbindliche inhaltliche Priorität:
+
+1. Warum dieses Unternehmen?
+Leite einen konkreten und glaubwürdigen Grund ausschließlich aus den tatsächlich vorliegenden Informationen zur Stelle und zum Unternehmen ab. Nutze dafür insbesondere konkrete Aufgaben, Produkte, Technologien, Branchen, Projekte, Arbeitsweisen, Teamstrukturen, Entwicklungsmöglichkeiten oder andere tatsächlich genannte Merkmale.
+Der Unternehmensbezug ist wichtiger als eine allgemeine Beschreibung der eigenen Qualifikationen.
+Erfinde keine Unternehmensfakten oder Motivation.
+
+2. Warum diese konkrete Stelle?
+Greife die für den Bewerber relevantesten Aufgaben und Anforderungen der Position auf und stelle einen nachvollziehbaren Zusammenhang zu seinem bisherigen Weg und seiner beruflichen Entwicklung her.
+Zeige insbesondere, warum die Stelle für seinen nächsten beruflichen Schritt interessant ist.
+
+3. Warum passt der Bewerber?
+Formuliere eine kurze Gesamtpassung anhand von maximal 2 bis 3 besonders relevanten Profilbelegen.
+Bevorzuge konkrete praktische Erfahrungen gegenüber einer Aufzählung von Technologien.
+Das Anschreiben soll nicht wie ein zweiter Lebenslauf wirken.
+
+4. Profilbelege gezielt auswählen
+Verwende nur Profilinformationen, die für die konkrete Stelle relevant sind.
+\`matched\` darf konkret als vorhandene Qualifikation oder Erfahrung verwendet werden.
+\`partial\` darf vorsichtig und entsprechend seiner tatsächlichen Aussage verwendet werden.
+\`unclear\` und \`contradicted\` dürfen niemals als vorhandene Qualifikation oder Erfahrung dargestellt werden.
+Verwende nur Projekte, die einen erkennbaren Bezug zur Stelle haben.
+
+5. Portfolio-Website
+Wenn \`profile.homepage\` vorhanden ist, kann am Ende natürlich auf die Homepage verwiesen werden.
+Übernimm die URL ausschließlich aus \`profile.homepage\`.
+Erfinde niemals eine URL.
+Wenn keine Homepage vorhanden ist, keinen entsprechenden Hinweis erfinden.
+
+Wichtige Regeln:
+
+- Verwende ausschließlich Informationen aus den bereitgestellten Eingabedaten.
+- Erfinde keine Technologien, Tätigkeiten, Projekte, Erfolge, Verantwortlichkeiten, Zahlen, Unternehmensfakten oder persönliche Motivation.
+- Fehlende Kenntnisse nicht als Negativliste aufführen.
+- Eine fehlende Anforderung darf nicht durch eine erfundene Qualifikation kompensiert werden.
+- Der Bewerber soll selbstbewusst, aber realistisch dargestellt werden. Keine Übertreibung des Erfahrungsniveaus.
+- Eigenständige Projekte dürfen als Beleg für Eigeninitiative und Lernbereitschaft dienen, sollen aber nicht ausführlich aufgezählt oder technisch erklärt werden.
+- Wenn mehrere Profilinformationen passen, wähle die 2 bis 3 mit dem höchsten konkreten Nutzen für diese Stelle.
+- Technologien nur nennen, wenn sie für die Stelle relevant sind oder einen wichtigen Beleg für die Passung darstellen.
+
+Besonderer Fokus auf Individualität:
+
+Das Anschreiben muss erkennbar speziell für dieses Unternehmen und diese Position geschrieben sein.
+
+Vermeide Formulierungen, die problemlos in Bewerbungen an andere Unternehmen übernommen werden könnten, beispielsweise:
+- „Ihr innovatives Unternehmen hat mich sofort begeistert.“
+- „Die abwechslungsreichen Aufgaben haben mich besonders angesprochen.“
+- „Ich möchte meine Leidenschaft für Softwareentwicklung bei Ihnen einbringen.“
+- „Ihr Unternehmen bietet spannende Herausforderungen.“
+- „Mit großem Interesse habe ich Ihre Stellenanzeige gelesen.“
+
+Solche allgemeinen Aussagen dürfen nur verwendet werden, wenn unmittelbar ein konkreter Bezug zur jeweiligen Stelle oder zum Unternehmen folgt.
+
+Nicht einfach die Stellenanzeige paraphrasieren. Stattdessen erklären, warum konkrete Aspekte der Stelle für den Bewerber interessant sind.
+
+Schreibstil:
+
+- natürlich und persönlich
+- professionell, aber nicht steif
+- selbstbewusst, aber nicht überheblich
+- präzise und bodenständig
+- verständliche Sprache
+- keine künstlich perfekten oder übermäßig komplexen Formulierungen
+- keine inflationären Adjektive
+- keine unnötigen Floskeln
+- keine wiederholten Standardformulierungen aus vorherigen Anschreiben
+
+Das Anschreiben soll wie ein individuell verfasstes Anschreiben eines technisch interessierten Junior-/Berufseinsteigers wirken und nicht wie ein generierter Standardtext.
+
+Struktur:
+
+- persönlicher Einstieg mit konkretem Bezug zu Unternehmen und Stelle
+- kurze Einordnung des beruflichen Hintergrunds
+- 2 bis 3 relevante Belege für die Passung
+- Schwerpunkt auf Motivation für Unternehmen und konkrete Position
+- optionaler kurzer Verweis auf die Homepage
+- persönlicher Abschluss mit Interesse an einem Gespräch
+
+Zielumfang: etwa 300 bis 400 Wörter, maximal eine Seite.
+
+Wenn ein Ansprechpartnername vorhanden ist, verwende ihn für die persönliche Anrede.
+Wenn kein Ansprechpartnername vorhanden ist, verwende:
+„Sehr geehrte Damen und Herren,“
+
+Keine Signatur mit erfundenen persönlichen Daten erstellen. Verwende am Ende lediglich:
+„Mit freundlichen Grüßen
+
+[Name]“`);
     if (result.error === "missing_key") return jsonResponse({ error: "KI-Service ist serverseitig nicht konfiguriert." }, 503, origin);
     if (result.error) return jsonResponse({ error: "Das Anschreiben konnte nicht generiert werden." }, 502, origin);
     let letter; try { letter = JSON.parse(result.answer); } catch { return jsonResponse({ error: "Die KI lieferte kein gültiges Anschreiben." }, 502, origin); }
