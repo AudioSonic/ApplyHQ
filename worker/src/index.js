@@ -435,11 +435,15 @@ Verwende nur Profilinformationen, die für die konkrete Stelle relevant sind.
 \`partial\` darf vorsichtig und entsprechend seiner tatsächlichen Aussage verwendet werden.
 \`unclear\` und \`contradicted\` dürfen niemals als vorhandene Qualifikation oder Erfahrung dargestellt werden.
 Verwende nur Projekte, die einen erkennbaren Bezug zur Stelle haben.
+Verwende insgesamt höchstens 2 bis 3 konkrete Profilbelege im gesamten Anschreiben. Mehrere Tätigkeiten oder Projekte dürfen nicht einzeln aufgezählt werden, wenn sie denselben Aspekt der Passung belegen.
+Ein Profilbeleg soll immer einen konkreten Zweck erfüllen: Er muss eine relevante Anforderung, Aufgabe oder Motivation für diese Stelle unterstützen.
 
 5. Portfolio-Website
-Wenn \`profile.homepage\` vorhanden ist, kann am Ende natürlich auf die Homepage verwiesen werden.
-Übernimm die URL ausschließlich aus \`profile.homepage\`.
-Erfinde niemals eine URL.
+Wenn \`profile.homepage\` vorhanden ist, kann am Ende des Anschreibens kurz und natürlich auf die persönliche Homepage bzw. Portfolio-Website verwiesen werden.
+WICHTIG: Die URL darf niemals im Fließtext des Anschreibens ausgegeben werden, auch wenn sie in \`profile.homepage\` vorhanden ist.
+Verwende ausschließlich eine Formulierung wie:
+„Einen Einblick in meine bisherigen Projekte finden Sie außerdem auf meiner persönlichen Homepage.“
+Die konkrete URL wird bereits an anderer Stelle in den Bewerbungsunterlagen dargestellt und darf deshalb nicht erneut im Anschreiben erscheinen.
 Wenn keine Homepage vorhanden ist, keinen entsprechenden Hinweis erfinden.
 
 Wichtige Regeln:
@@ -456,6 +460,12 @@ Wichtige Regeln:
 Besonderer Fokus auf Individualität:
 
 Das Anschreiben muss erkennbar speziell für dieses Unternehmen und diese Position geschrieben sein.
+
+Übernimm nicht möglichst viele Punkte aus der Stellenanzeige. Wähle nur die 2 bis 3 Aspekte des Unternehmens oder der Position aus, die für die Motivation des Bewerbers tatsächlich am relevantesten sind.
+
+Benefits wie Urlaub, Getränke, Deutschlandticket, Firmenevents oder ähnliche Standardleistungen sollen grundsätzlich nicht als Motivation im Anschreiben verwendet werden. Weiterbildung, Mentoring oder besondere Entwicklungsmöglichkeiten dürfen erwähnt werden, wenn sie einen nachvollziehbaren Bezug zur beruflichen Entwicklung des Bewerbers haben.
+
+Vermeide insbesondere Sätze, die lediglich einen Punkt der Stellenanzeige bestätigen, ohne einen echten Mehrwert für die Motivation zu liefern.
 
 Vermeide Formulierungen, die problemlos in Bewerbungen an andere Unternehmen übernommen werden könnten, beispielsweise:
 - „Ihr innovatives Unternehmen hat mich sofort begeistert.“
@@ -486,7 +496,7 @@ Struktur:
 
 - persönlicher Einstieg mit konkretem Bezug zu Unternehmen und Stelle
 - kurze Einordnung des beruflichen Hintergrunds
-- 2 bis 3 relevante Belege für die Passung
+- nur die für die Stelle relevantesten Profilbelege
 - Schwerpunkt auf Motivation für Unternehmen und konkrete Position
 - optionaler kurzer Verweis auf die Homepage
 - persönlicher Abschluss mit Interesse an einem Gespräch
