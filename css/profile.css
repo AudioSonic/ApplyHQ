@@ -4,6 +4,16 @@
 .profile-section h2 { margin-top: 0; }
 .profile-value { display: block; margin: .45rem 0; color: var(--color-text-secondary, #555); }
 .profile-data-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1rem 0; }
+.profile-editor-modal-container .modal { width: min(100%, 1260px); }
 .profile-editor-form { display: grid; gap: .55rem; }
+.profile-editor-tabs { display: flex; gap: .35rem; flex-wrap: wrap; border-bottom: 1px solid #d9dde5; padding-bottom: .5rem; }
+.profile-editor-tabs button { border: 0; background: #eef1f6; color: inherit; padding: .6rem .8rem; border-radius: 6px; cursor: pointer; }
+.profile-editor-tabs button.is-active { background: #263b73; color: #fff; }
+.profile-editor-tab-panel { display: grid; gap: .55rem; align-content: start; }
+.profile-editor-tab-panel[hidden] { display: none; }
+.profile-entry-editor { display: grid; gap: .65rem; border: 1px solid #d9dde5; border-radius: 8px; padding: .8rem; }
+.profile-entry-editor legend { font-weight: 700; padding: 0 .3rem; }
+.profile-entry-list { display: grid; gap: .8rem; }
+.profile-entry { display: grid; gap: .45rem; border: 1px solid #e5e7ec; border-radius: 6px; padding: .7rem; }
 .profile-editor-form input, .profile-editor-form textarea { width: 100%; box-sizing: border-box; font: inherit; padding: .65rem; border: 1px solid #ccd0d8; border-radius: 6px; }
 .profile-editor-hint { color: #666; font-size: .9rem; }
