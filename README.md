@@ -2,7 +2,11 @@
 
 ApplyHQ ist eine browserbasierte Anwendung zur Organisation des persönlichen Bewerbungsprozesses. Sie bündelt Bewerbungen, Suchprofile, externe Stellensuche, Stellenanalyse, Profil-Matching, KI-gestützte Anschreiben und lokalen PDF-Export.
 
-[Screenshot vom Dashboard]
+**Live-Demo:** [ApplyHQ direkt ausprobieren](https://audiosonic.github.io/ApplyHQ/)
+
+ApplyHQ kann ohne lokale Installation direkt im Browser verwendet werden. Bewerbungsdaten und Profile werden lokal im Browser gespeichert. Für die KI-gestützte Stellenanalyse, das Matching und die Anschreibenerstellung ist der konfigurierte Backend-Worker erforderlich.
+
+<img width="1679" height="933" alt="grafik" src="https://github.com/user-attachments/assets/864886a7-767f-4d3c-b672-b57884ebf4d3" />
 
 ## Entwicklungsstand
 
