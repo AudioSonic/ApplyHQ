@@ -1,201 +1,196 @@
 # ApplyHQ
 
-<img width="1895" height="929" alt="grafik" src="https://github.com/user-attachments/assets/8d21b32d-aa32-4dbe-97dc-75013b2ec0ba" />
+ApplyHQ ist eine browserbasierte Anwendung zur Organisation des persönlichen Bewerbungsprozesses. Sie bündelt Bewerbungen, Suchprofile, externe Stellensuche, Stellenanalyse, Profil-Matching, KI-gestützte Anschreiben und lokalen PDF-Export.
 
+[Screenshot vom Dashboard]
 
-## Projektübersicht
+## Entwicklungsstand
 
-ApplyHQ ist eine moderne Webanwendung zur Verwaltung und schrittweisen Automatisierung des gesamten Bewerbungsprozesses.
+| Bereich | Status |
+| --- | --- |
+| Bewerbungs-CRUD, Suche, Filter und Sortierung | Implementiert |
+| Suchprofile und externe Stellensuche | Implementiert |
+| Lokale Speicherung und Migration bestehender Daten | Implementiert |
+| Bewerberprofil sowie Profil-Import/-Export | Implementiert |
+| KI-Stellenanalyse, Matching, Anschreiben, Review und Revision | Implementiert; Worker und Secret erforderlich |
+| Lokaler PDF-Export mit eingebetteten Fonts | Implementiert |
+| Menüpunkt „Dokumente“ | Teilweise implementiert; derzeit deaktiviert |
+| Geräteübergreifende Synchronisierung | Nicht implementiert |
+| Offline-Betrieb | Nicht implementiert beziehungsweise nicht nachweisbar |
 
-Die Anwendung entstand ursprünglich als praxisorientiertes Lernprojekt und wurde kontinuierlich zu einer umfangreichen persönlichen Bewerbungsplattform weiterentwickelt. Ziel ist es, möglichst viele wiederkehrende Aufgaben der Jobsuche an einem zentralen Ort zu bündeln – von der Suche nach passenden Stellenanzeigen über die Verwaltung von Bewerbungen bis hin zur KI-gestützten Analyse und Erstellung von Anschreiben.
+ApplyHQ ist ein persönliches Lern- und Portfolio-Projekt, kein vollständiges SaaS-Produkt mit Accounts, Cloud-Synchronisierung oder zentraler Datenbank.
 
-ApplyHQ verbindet dabei klassische Webentwicklung mit API-Integration, lokaler Datenhaltung, KI-gestützten Funktionen und automatisierter Dokumentenerstellung.
+## Zentrale Abläufe
 
----
+```text
+Suchprofil → Stellensuche → Stellenanzeige → Bewerbung → Stellenanalyse
+→ Profil-Matching → Anschreiben → Review/Revision → PDF-Export
+```
 
-## Funktionen
+Bewerbungen können auch manuell angelegt werden. Die KI-Schritte sind optional.
+
+## Tatsächlich implementierte Funktionen
 
 ### Bewerbungsverwaltung
 
-- Vollständige CRUD-Verwaltung von Bewerbungen
-- Verwaltung von Unternehmen, Stellenanzeigen und Ansprechpartnern
-- Bewerbungsstatus und weitere Bewerbungsinformationen
-- Suche, Filterung und Sortierung
-- Dynamische Benutzeroberfläche
-- Datenvalidierung
-- JSON-Import und -Export
-- Lokale Speicherung von Bewerbungsdaten
+- Bewerbungen anlegen, bearbeiten und löschen
+- Unternehmens-, Positions-, Orts-, Status-, Kontakt- und Adressdaten
+- Suche, Filterung, Sortierung und zentrale Formularvalidierung
+- Migration älterer Bewerbungsdaten
+- JSON-Import und JSON-Export
 
-### Automatisierte Stellensuche
+Die wichtigsten Dateien sind `js/applications.js`, `js/applicationModel.js`, `js/applicationCards.js`, `js/applicationModal.js` und `js/storage.js`.
 
-ApplyHQ kann anhand individuell konfigurierbarer Suchprofile passende Stellenanzeigen recherchieren.
+### Suchprofile und Stellensuche
 
-Dabei können unter anderem Stellenangebote aus folgenden Quellen berücksichtigt werden:
+Suchprofile unterstützen Suchbegriffe, Position, Standort, Radius, Remote, Beschäftigungsart und Aktiv/Inaktiv-Status. `js/searchJobs.js` bewertet und normalisiert Ergebnisse. `worker/src/index.js` ruft Daten der Bundesagentur für Arbeit und von Arbeitnow ab, reichert BA-Ergebnisse an und liefert eine normalisierte Struktur.
 
-- Bundesagentur für Arbeit
-- Arbeitnow
+### Bewerberprofil
 
-Suchprofile können beispielsweise hinsichtlich Suchbegriffen und weiterer Kriterien konfiguriert werden. Gefundene Stellenanzeigen können anschließend als Bewerbungen in ApplyHQ übernommen und dort weiterverarbeitet werden.
+Das versionierte Profilmodell umfasst persönliche Angaben, Kenntnisse, Berufserfahrung, Ausbildung, Projekte und weitere Bewerbungsinformationen. Es wird lokal gespeichert und kann separat als JSON importiert beziehungsweise exportiert werden. Relevante Dateien: `js/profileModel.js`, `js/profileRepository.js`, `js/profile.js`.
 
-### KI-gestützte Stellenanalyse
+### KI-Pipeline
 
-Stellenanzeigen können automatisiert durch eine KI analysiert werden.
+Der Cloudflare Worker stellt folgende Endpunkte bereit:
 
-Dabei werden unter anderem strukturierte Informationen ermittelt wie:
+- `POST /api/ai/job-analysis`
+- `POST /api/ai/profile-matching`
+- `POST /api/ai/cover-letter`
+- `POST /api/ai/cover-letter-review`
+- `POST /api/ai/cover-letter-revision`
 
-- Aufgaben
-- Muss-Anforderungen
-- Wünschenswerte Anforderungen
-- Technologien
-- Soft Skills
-- Benefits
+Die Ergebnisse werden anhand strukturierter JSON-Schemas beziehungsweise expliziter Modellvalidierungen geprüft. Frontend-Services senden für den jeweiligen Schritt nur notwendige Daten und filtern unter anderem private Kontaktdaten und Notizen aus KI-Requests heraus. KI-Ergebnisse bleiben Vorschläge und müssen fachlich geprüft werden.
 
-Die Analyse bildet anschließend die Grundlage für weitere Verarbeitungsschritte.
+### PDF-Export
 
-### KI-gestütztes Matching
+`js/coverLetterPdf.js` erzeugt Anschreiben lokal im Browser. `pdf-lib`, `fontkit` und die mitgelieferten Carlito-Schriften ermöglichen DIN-A4-Seiten, mehrere Seiten, deutsche Sonderzeichen und eingebettete TrueType-Fonts. Der PDF-Export benötigt keinen KI-Aufruf.
 
-Die analysierten Stellenanforderungen können mit dem persönlichen Bewerberprofil abgeglichen werden.
+## Technologiestack
 
-Dabei berücksichtigt ApplyHQ unter anderem:
+- HTML5, CSS3 und JavaScript ohne Frontend-Framework
+- DOM-basierte UI mit klassischen Skripten und global geladenen Abhängigkeiten
+- `localStorage`, JSON-Import/-Export und Datenmigrationen
+- Cloudflare Worker und REST-Integrationen
+- Bundesagentur für Arbeit, Arbeitnow und OpenAI Responses API
+- `pdf-lib`, `@pdf-lib/fontkit` und `pdfjs-dist`
+- Node.js Test Runner
 
-- Muss-Anforderungen
-- Technische Kenntnisse
-- Berufserfahrung
-- Ausbildung
-- Projekte
-- Soft Skills
+Es gibt keinen Bundler, kein TypeScript und keinen separaten Build-Schritt für das Frontend.
 
-Das Ergebnis wird als prozentuale Einschätzung der Passung dargestellt und soll eine schnelle Einschätzung ermöglichen, wie gut eine Stelle zum eigenen Profil passt.
-
-### KI-gestützte Anschreiben
-
-Auf Grundlage der Stellenanzeige, der Stellenanalyse und des persönlichen Bewerberprofils kann ApplyHQ automatisch ein individuelles Anschreiben erstellen.
-
-Der Workflow berücksichtigt dabei unter anderem:
-
-- konkrete Anforderungen der Stelle
-- vorhandene Kenntnisse und Erfahrungen
-- relevante Projekte
-- Ansprechpartner
-- Unternehmensinformationen
-- persönliche Motivation für die jeweilige Position
-
-Erstellte Anschreiben können anschließend geprüft und überarbeitet werden.
-
-### PDF-Erstellung
-
-Anschreiben können direkt aus ApplyHQ als PDF exportiert werden.
-
-Der PDF-Export erfolgt lokal und verwendet:
-
-- DIN-A4-Layout
-- individuelles Bewerbungsdesign
-- dunkle Seitenleiste
-- eingebettete Carlito-Schriftarten
-- Unterstützung deutscher Sonderzeichen
-- Mehrseitige Dokumente
-- automatisch erzeugte Empfänger- und Bewerbungsdaten
-
-Die PDF-Erzeugung benötigt keinen KI-Aufruf.
-
----
-
-## Technischer Aufbau
-
-ApplyHQ wurde schrittweise entwickelt und verwendet unter anderem:
-
-- HTML5
-- CSS3
-- JavaScript (ES6+)
-- DOM-Manipulation
-- Modularisierung
-- Local Storage
-- JSON
-- REST-/API-Anbindungen
-- C#/.NET-basierte Backend-Komponenten
-- SQL-basierte Datenverarbeitung
-- OpenAI API
-- `pdf-lib`
-- `fontkit`
-- TrueType-Font-Einbettung
-- Progressive Web App (PWA)
-
-Besonderer Wert wurde auf eine modulare Struktur gelegt. Datenmodelle, Services, UI-Komponenten und Verarbeitungslogik sind voneinander getrennt, sodass die Anwendung schrittweise erweitert werden kann.
-
----
-
-## Projektarchitektur
-
-Die Verarbeitung einer Bewerbung folgt inzwischen einem mehrstufigen Workflow:
+## Architektur und Datenfluss
 
 ```text
-Suchprofil
-    ↓
-Automatisierte Stellensuche
-    ↓
-Stellenanzeige
-    ↓
-Stellenanalyse
-    ↓
-Bewerberprofil
-    ↓
-KI-Matching
-    ↓
-Anschreiben
-    ↓
-Qualitätsprüfung / Überarbeitung
-    ↓
-PDF-Export
-
+index.html
+  ↓
+js/ + css/  (UI, Modelle, Services, lokale Persistenz)
+  ├─ localStorage: Bewerbungen, Suchprofile, Profil
+  ├─ Cloudflare Worker
+  │    ├─ Bundesagentur für Arbeit
+  │    ├─ Arbeitnow
+  │    └─ OpenAI API
+  └─ pdf-lib/fontkit: PDF-Erzeugung im Browser
 ```
 
-## Projektentwicklung mit KI-Unterstützung
+Wichtige Verantwortlichkeiten:
 
-ApplyHQ ist auch ein praktisches Beispiel für den Einsatz moderner KI-Werkzeuge in der Softwareentwicklung.
+- `js/app.js`: Navigation und UI-Zustand
+- `js/dashboard.js`, `js/dashboardPanels.js`: Dashboard
+- `js/applications.js`, `js/applicationModel.js`: Bewerbungsdaten und CRUD
+- `js/applicationCards.js`: Darstellung, Suche, Filter und Sortierung
+- `js/storage.js`: Bewerbungs-Persistenz und Migration
+- `js/profileModel.js`, `js/profileRepository.js`: Profilmodell und Repository
+- `js/*Model.js` und `js/*Service.js`: KI-Modelle und Services
+- `worker/src/index.js`: CORS, Request-Validierung, Providerzugriff, Rate-Limit und KI-Integration
 
-Ein großer Teil der Implementierungsarbeit der neueren Funktionen wurde mit Unterstützung von OpenAI Codex umgesetzt. Dabei lag mein Schwerpunkt insbesondere auf:
+## Datenhaltung und Grenzen
 
-Konzeption und Planung neuer Funktionen
-Definition von Anforderungen und Workflows
-Architekturentscheidungen
-Entwicklung der Datenmodelle und Verarbeitungskonzepte
-Formulierung und Präzisierung von Entwicklungsaufgaben
-Überprüfung der generierten Implementierungen
-Fehleranalyse und Debugging
-Durchführung und Erweiterung von Regressionstests
-Qualitätssicherung
-Iterativer Weiterentwicklung und Refactoring
+Bewerbungs-, Suchprofil- und Profildaten werden grundsätzlich lokal im Browser gespeichert. Es gibt keine Benutzerkonten, keine zentrale Datenbank und keine vollständige geräteübergreifende Synchronisierung. `localStorage` ist browsergebunden, begrenzt und keine verschlüsselte Datenbank.
 
-Codex wurde dabei als Entwicklungswerkzeug und Coding-Assistent eingesetzt. Die technische Umsetzung wurde anschließend anhand definierter Anforderungen überprüft, getestet und iterativ angepasst.
+Bewerbungsdaten können personenbezogene Informationen enthalten. Vor einer Nutzung mit echten Daten sollten Zugriff, Backups, Löschung und die Weitergabe ausgewählter Daten an externe KI-Dienste bewusst geprüft werden.
 
-Dadurch dient ApplyHQ nicht nur als Softwareprojekt, sondern auch als praktisches Beispiel dafür, wie KI-gestützte Entwicklungswerkzeuge in einen strukturierten Softwareentwicklungsprozess integriert werden können.
+## Installation und lokaler Start
 
-## Ziel des Projekts
+Voraussetzung ist Node.js mit npm. Abhängigkeiten werden mit folgendem Befehl installiert:
 
-ApplyHQ entstand ursprünglich aus einem konkreten persönlichen Problem während meiner Jobsuche.
+```bash
+npm install
+```
 
-Ich wollte nicht länger Stellenanzeigen, Bewerbungen, Ansprechpartner, Dokumente und den aktuellen Bewerbungsstatus über verschiedene Anwendungen und Dateien hinweg verwalten müssen. Daraus entstand die Idee einer zentralen Anwendung, die den gesamten Bewerbungsprozess unterstützt und möglichst viele wiederkehrende Aufgaben automatisiert.
+Das Frontend besteht aus statischen Dateien und hat keinen Build-Schritt. Es sollte über einen lokalen HTTP-Server geöffnet werden, nicht zwingend über `file://`.
 
-Anstatt einzelne Tutorials nachzubauen, verfolge ich einen projektbasierten Lernansatz. Neue Technologien und Konzepte werden direkt anhand konkreter Anforderungen umgesetzt und anschließend in das bestehende System integriert.
+Die Worker-URL steht in `js/config.js`:
 
-Dadurch entwickelt sich ApplyHQ kontinuierlich weiter und dient gleichzeitig als persönliches Werkzeug, Lernprojekt und Portfolio-Projekt.
+```js
+window.APPLYHQ_JOB_SEARCH_API_URL = "https://example-worker.example.workers.dev";
+```
 
-## Qualitätssicherung
+Diese URL ist öffentliche Konfiguration und kein Secret.
 
-Da ApplyHQ kontinuierlich erweitert wird, besitzt das Projekt eine wachsende automatisierte Testabdeckung.
+## Worker-Konfiguration und Secrets
 
-Getestet werden unter anderem:
+Der Worker liegt unter `worker/`. Lokale Entwicklung:
 
-Datenmodelle
-Datenvalidierung
-Persistenz
-Migration bestehender Daten
-KI-Workflows
-Matching
-Anschriftenerstellung
-PDF-Erzeugung
-Unicode- und Sonderzeichenverarbeitung
-PDF-Text-Extraktion
-Regressionen bei bestehenden Funktionen
+```bash
+cd worker
+npx wrangler dev
+```
 
-Besonderes Augenmerk liegt auf der Persistenz der KI-Ergebnisse und darauf, dass Änderungen auch nach einem erneuten Laden der Anwendung erhalten bleiben.
+Secrets dürfen nicht in versionierte Dateien eingetragen werden. Sie werden über Wrangler gesetzt:
+
+```bash
+npx wrangler secret put OPENAI_API_KEY
+npx wrangler secret put BA_API_KEY
+```
+
+`OPENAI_MODEL` und `ALLOWED_ORIGIN` werden in `worker/wrangler.toml` konfiguriert. Die Worker-URL und erlaubten Origins müssen zur tatsächlichen Frontend-URL passen. Die öffentliche Erreichbarkeit des Workers ist keine vollständige Authentifizierung; Rate Limits, Kostenkontrolle und Datenschutz müssen vor einer Produktivnutzung geprüft werden.
+
+## Tests
+
+```bash
+npm test
+```
+
+Die Tests unter `tests/` decken unter anderem Bewerbungsmodell und Persistenz, Profilmodell, Suchauswertung, Stellenanalyse, Matching, Anschreiben, Review, Revision, PDF-/Unicode-Verarbeitung und Worker-Validierung ab. Es handelt sich überwiegend um isolierte Node-Tests. Browser- und End-to-End-Tests sind nicht vorhanden.
+
+## PWA-Status
+
+`manifest.webmanifest`, Theme-Farben und App-Icons sind vorhanden. Im aktuellen Code gibt es jedoch keinen Service Worker und keine Registrierung über `navigator.serviceWorker.register(...)`. Daher wird keine Offline-Funktion behauptet.
+
+## Einschränkungen und geplante Bereiche
+
+### Teilweise implementiert
+
+- Der Menüpunkt „Dokumente“ ist in `index.html` vorhanden, aber deaktiviert.
+- Bewerbungs- und Profilimport/-export sind getrennte Datenpfade; ein gemeinsames Backup aller Bereiche ist nicht vorhanden.
+- Die Anwendung verwendet global geladene Skripte statt ES-Module oder eines Bundlers.
+
+### Nicht implementiert beziehungsweise geplant
+
+- Benutzerkonten und Authentifizierung
+- Cloud-Synchronisierung und zentrale Datenbank
+- vollständige Dokumentenverwaltung
+- Service Worker und Offline-Betrieb
+- Browser- und End-to-End-Testinfrastruktur
+
+## Projektstruktur
+
+```text
+index.html                 Frontend-Einstiegspunkt
+css/                       Styles
+js/                        UI, Modelle, Services und Persistenz
+assets/                    Icons, Fonts und Browser-Vendor-Dateien
+worker/src/index.js        Cloudflare Worker
+worker/wrangler.toml       Worker-Konfiguration
+tests/                     Node-basierte Tests
+data/                      Projekt-/Beispieldaten
+```
+
+## KI-Unterstützung im Entwicklungsprozess
+
+Das Frontend entstand größtenteils ohne KI-Unterstützung. Beim Backend und insbesondere bei der Integration der KI-Endpunkte wurde intensiv mit OpenAI Codex zusammengearbeitet, um Request-Flüsse, Validierung, Structured Outputs, Datenminimierung und Regressionstests sauber zu integrieren.
+
+Anforderungen und Workflows wurden definiert, Architekturentscheidungen getroffen, Vorschläge geprüft, Tests ergänzt beziehungsweise ausgewertet und Fehler iterativ analysiert. Die Dokumentation behauptet daher nicht, dass sämtliche Implementierungen vollständig manuell entstanden sind, sondern beschreibt KI als Entwicklungswerkzeug innerhalb eines überprüften Entwicklungsprozesses.
+
+## Portfolio-Kontext
+
+ApplyHQ zeigt praktische Arbeit mit einer realen Fachdomaine, Frontend- und DOM-Entwicklung, Datenmodellen und Migrationen, lokaler Persistenz, REST-APIs, Cloudflare Worker, Secret-Verwaltung, strukturierter KI-Ausgabe, PDF-Erzeugung, Unicode-Verarbeitung und automatisierten Tests.
