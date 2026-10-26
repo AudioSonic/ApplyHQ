@@ -6,7 +6,8 @@ ApplyHQ ist eine browserbasierte Anwendung zur Organisation des persönlichen Be
 
 ApplyHQ kann ohne lokale Installation direkt im Browser verwendet werden. Bewerbungsdaten und Profile werden lokal im Browser gespeichert. Für die KI-gestützte Stellenanalyse, das Matching und die Anschreibenerstellung ist der konfigurierte Backend-Worker erforderlich.
 
-<img width="1679" height="933" alt="grafik" src="https://github.com/user-attachments/assets/864886a7-767f-4d3c-b672-b57884ebf4d3" />
+<img width="1895" height="929" alt="ApplyHQ_Screenshot_1" src="https://github.com/user-attachments/assets/5ea18637-b70c-406f-986c-145c922a5c32" />
+
 
 ## Entwicklungsstand
 
