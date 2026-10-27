@@ -77,6 +77,18 @@ function normalizeSearchText(value) {
     return String(value || "").trim().toLocaleLowerCase("de-DE");
 }
 
+function normalizeCityName(value) {
+    let city = normalizeSearchText(value)
+        .replace(/\s*\([^)]*\)\s*/g, " ")
+        .replace(/\s*\/\s*(?:hybrid|remote|homeoffice|onsite|vor ort).*$/i, "")
+        .replace(/\s*[-|]\s*(?:hybrid|remote|homeoffice|onsite|vor ort).*$/i, "")
+        .replace(/,?\s*(?:germany|deutschland)\s*$/i, "")
+        .trim();
+
+    const postalCodeMatch = city.match(/^\d{5}\s+(.+)$/);
+    return (postalCodeMatch ? postalCodeMatch[1] : city).trim();
+}
+
 function isNationwideLocation(value) {
     const location = normalizeSearchText(value);
     return !location || /^(deutschland|bundesweit|ganz deutschland)$/.test(location);
@@ -98,11 +110,13 @@ function getKeywordVariants(keyword) {
 }
 
 function getDistanceBetweenCities(firstCity, secondCity) {
-    const first = mockCityCoordinates[normalizeSearchText(firstCity)];
-    const second = mockCityCoordinates[normalizeSearchText(secondCity)];
+    const normalizedFirstCity = normalizeCityName(firstCity);
+    const normalizedSecondCity = normalizeCityName(secondCity);
+    const first = mockCityCoordinates[normalizedFirstCity];
+    const second = mockCityCoordinates[normalizedSecondCity];
 
     if (!first || !second) {
-        return normalizeSearchText(firstCity) === normalizeSearchText(secondCity) ? 0 : null;
+        return normalizedFirstCity === normalizedSecondCity ? 0 : null;
     }
 
     const toRadians = degrees => degrees * Math.PI / 180;

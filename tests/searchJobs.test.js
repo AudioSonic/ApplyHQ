@@ -96,6 +96,24 @@ test("behandelt einen leeren Radius als exakten Standort", () => {
     assert.equal(distantJob.isLocationMatch, false);
 });
 
+test("normalisiert typische Arbeitnow-Ortsangaben", () => {
+    const context = loadSearchLogic();
+    const profileData = profile({ location: "Leipzig", radius: 30, searchTerms: ["softwareentwickler"] });
+    const variants = ["Leipzig, Germany", "Leipzig / Hybrid", "04109 Leipzig"];
+
+    for (const city of variants) {
+        const result = context.evaluateSearchJob({
+            company: "Test GmbH",
+            position: "Softwareentwickler",
+            city,
+            keywords: [],
+            publishedAt: "2026-08-23"
+        }, profileData);
+        assert.equal(result.isLocationMatch, true, city);
+        assert.equal(result.isMatch, true, city);
+    }
+});
+
 test("übernimmt die Stellenbeschreibung, lässt Details aber leer", () => {
     const context = loadSearchLogic();
     const result = context.getAutomaticApplicationData({
